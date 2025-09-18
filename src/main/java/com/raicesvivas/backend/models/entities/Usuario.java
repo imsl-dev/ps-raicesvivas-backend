@@ -1,10 +1,13 @@
 package com.raicesvivas.backend.models.entities;
 
+import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
+import com.raicesvivas.backend.models.enums.RolUsuario;
+import com.raicesvivas.backend.models.enums.TipoDocumento;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Entity
+@Entity(name="usuarios")
 @Data
 public class Usuario {
     @Id
@@ -14,5 +17,13 @@ public class Usuario {
 
     private String apellido;
 
-    
+    private TipoDocumento tipoDocumento;
+
+    private RolUsuario rol;
+
+    private Provincia provincia;
+
+    private int puntos;
+
+
 }
