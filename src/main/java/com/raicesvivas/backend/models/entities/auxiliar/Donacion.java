@@ -1,30 +1,33 @@
 package com.raicesvivas.backend.models.entities;
 
-import com.raicesvivas.backend.models.enums.EstadoInscripcion;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "inscripciones")
+@Table(name = "donaciones")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Inscripcion {
+public class Donacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // Para evitar referencia circular - solo almacenar IDs
-    @Column(name = "usuario_id", nullable = false)
-    private Integer usuarioId;
-
     @Column(name = "evento_id", nullable = false)
-    private Integer eventoId;
+    private Long eventoId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false)
-    private EstadoInscripcion estado;
+    @Column(name = "usuario_id", nullable = false)
+    private Long usuarioId;
+
+    @Column(name = "monto", nullable = false, precision = 10, scale = 2)
+    private BigDecimal monto;
+
+    @Column(name = "mensaje", columnDefinition = "TEXT")
+    private String mensaje;
 }
