@@ -1,53 +1,25 @@
 -- Script de inicialización para Spring Boot
 -- Archivo: src/main/resources/schema.sql
 
--- Crear tipos ENUM
-DO $$ BEGIN
+-- Crear tipos ENUM (PostgreSQL creará automáticamente si no existen)
 CREATE TYPE tipo_documento AS ENUM ('DNI', 'PASAPORTE');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
 CREATE TYPE rol_usuario AS ENUM ('ADMIN', 'USUARIO', 'ORGANIZADOR');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
 CREATE TYPE tipo_evento AS ENUM ('REFORESTACION', 'RECOLECCION_BASURA', 'JUNTA_ALIMENTOS', 'DONACIONES');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
 CREATE TYPE estado_evento AS ENUM ('ACTIVO', 'INACTIVO');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
 CREATE TYPE estado_inscripcion AS ENUM ('PRESENTE', 'AUSENTE', 'PENDIENTE');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
 CREATE TYPE estado_peticion AS ENUM ('ACEPTADO', 'CANCELADO', 'PENDIENTE');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
 
 -- Tabla PROVINCIAS
 CREATE TABLE IF NOT EXISTS provincias (
-                                          id SERIAL PRIMARY KEY,
-                                          nombre VARCHAR(255) NOT NULL
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL
     );
+
 
 -- Tabla USUARIOS
 CREATE TABLE IF NOT EXISTS usuarios (
-                                        id SERIAL PRIMARY KEY,
-                                        nombre VARCHAR(255) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
     apellido VARCHAR(255) NOT NULL,
     tipo_documento tipo_documento NOT NULL,
     nro_doc VARCHAR(20) NOT NULL UNIQUE,
@@ -59,29 +31,29 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
 -- Tabla CUENTAS_BANCARIAS
 CREATE TABLE IF NOT EXISTS cuentas_bancarias (
-                                                 id SERIAL PRIMARY KEY,
-                                                 cbu BIGINT NOT NULL,
-                                                 id_usuario INTEGER NOT NULL,
-                                                 FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+    id SERIAL PRIMARY KEY,
+    cbu BIGINT NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
     );
 
 -- Tabla SPONSORS
 CREATE TABLE IF NOT EXISTS sponsors (
-                                        id SERIAL PRIMARY KEY,
-                                        nombre VARCHAR(255) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
     ruta_img1 VARCHAR(500),
     ruta_img2 VARCHAR(500)
     );
 
 -- Tabla EVENTOS
 CREATE TABLE IF NOT EXISTS eventos (
-                                       id SERIAL PRIMARY KEY,
-                                       tipo tipo_evento NOT NULL,
-                                       estado estado_evento NOT NULL,
-                                       organizador_id INTEGER NOT NULL,
-                                       cuenta_bancaria_id INTEGER,
-                                       provincia_id INTEGER NOT NULL,
-                                       nombre VARCHAR(255) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    tipo tipo_evento NOT NULL,
+    estado estado_evento NOT NULL,
+    organizador_id INTEGER NOT NULL,
+    cuenta_bancaria_id INTEGER,
+    provincia_id INTEGER NOT NULL,
+    nombre VARCHAR(255) NOT NULL,
     descripcion TEXT,
     ruta_img VARCHAR(500),
     hora_inicio TIMESTAMP NOT NULL,
@@ -99,30 +71,30 @@ CREATE TABLE IF NOT EXISTS eventos (
 
 -- Tabla INSCRIPCIONES
 CREATE TABLE IF NOT EXISTS inscripciones (
-                                             id SERIAL PRIMARY KEY,
-                                             usuario_id INTEGER NOT NULL,
-                                             estado estado_inscripcion NOT NULL,
-                                             evento_id INTEGER NOT NULL,
-                                             FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL,
+    estado estado_inscripcion NOT NULL,
+    evento_id INTEGER NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (evento_id) REFERENCES eventos(id)
     );
 
 -- Tabla PAGOS_USUARIOS
 CREATE TABLE IF NOT EXISTS pagos_usuarios (
-                                              id SERIAL PRIMARY KEY,
-                                              id_usuario INTEGER NOT NULL,
-                                              id_evento INTEGER NOT NULL,
-                                              FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    id SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL,
+    id_evento INTEGER NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_evento) REFERENCES eventos(id)
     );
 
 -- Tabla PETICIONES_ORGANIZADOR
 CREATE TABLE IF NOT EXISTS peticiones_organizadores (
-                                                        id SERIAL PRIMARY KEY,
-                                                        usuario_id INTEGER NOT NULL,
-                                                        estado_peticion estado_peticion NOT NULL,
-                                                        mensaje_usuario TEXT,
-                                                        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL,
+    estado_peticion estado_peticion NOT NULL,
+    mensaje_usuario TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
     );
 
 -- Tabla CANJEABLES

@@ -11,7 +11,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: none  # CAMBIADO: evita que Hibernate cree/modifique las tablas
+      ddl-auto: none 
     show-sql: true
     properties:
       hibernate:
@@ -19,11 +19,12 @@ spring:
     defer-datasource-initialization: true
 
   sql:
-    init: # Configuración inicial para que se ejecute la DB y los inserts
+    init:
       mode: always
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
       continue-on-error: false
+      separator: ";"  # AGREGADO: Para manejar correctamente los scripts
 
 # Configuración del servidor
 server:
