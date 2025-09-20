@@ -11,23 +11,25 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none  # CAMBIADO: evita que Hibernate cree/modifique las tablas
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-        hbm2ddl:
-          auto: create-drop
     defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
 
-# Configuración del servidor (opcional)
+  sql:
+    init: # Configuración inicial para que se ejecute la DB y los inserts
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: false
+
+# Configuración del servidor
 server:
   port: 8080
 
-# Configuración de logging (opcional)
+# Configuración de logging
 logging:
   level:
     com.raicesvivas.backend: DEBUG
