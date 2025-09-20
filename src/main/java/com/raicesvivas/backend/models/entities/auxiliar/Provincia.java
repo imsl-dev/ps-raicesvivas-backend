@@ -1,14 +1,15 @@
 package com.raicesvivas.backend.models.entities.auxiliar;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity(name="provincias")
+@Entity
+@Table(name = "provincias")
 @Data
 public class Provincia {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String nombre;

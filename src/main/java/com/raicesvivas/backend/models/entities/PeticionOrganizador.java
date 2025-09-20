@@ -2,11 +2,11 @@ package com.raicesvivas.backend.models.entities;
 
 import com.raicesvivas.backend.models.enums.EstadoInscripcion;
 import com.raicesvivas.backend.models.enums.EstadoPeticion;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity(name = "peticiones_organizadores")
+@Entity
+@Table(name = "peticiones_organizadores")
 @Data
 public class PeticionOrganizador {
 
@@ -15,6 +15,7 @@ public class PeticionOrganizador {
 
     private Usuario usuario;
 
+    @Enumerated(EnumType.STRING)
     private EstadoPeticion estadoPeticion;
 
     private String mensajeUsuario;

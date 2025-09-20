@@ -5,6 +5,8 @@ import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
 import com.raicesvivas.backend.models.enums.EstadoEvento;
 import com.raicesvivas.backend.models.enums.TipoEvento;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -17,8 +19,10 @@ public class Evento {
     @Id
     private int id;
 
+    @Enumerated(EnumType.STRING)
     private TipoEvento tipo;
 
+    @Enumerated(EnumType.STRING)
     private EstadoEvento estado;
 
     private Usuario organizador;
