@@ -1,19 +1,24 @@
 package com.raicesvivas.backend.models.entities.auxiliar;
 
 import com.raicesvivas.backend.models.entities.Usuario;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity(name="cuentas_bancarias")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name="cuentas_bancarias")
 public class CuentaBancaria {
 
-    //TODO estamos con estos campos? o hara falta mas?
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private int CBU;
 
-    private Usuario titular;
+    @Column(name = "id_usuario")
+    private int idUsuario;
 }
