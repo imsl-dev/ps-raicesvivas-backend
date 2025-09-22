@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Table(name = "usuarios")
 @Data
@@ -44,10 +42,4 @@ public class Usuario {
 
     @Column(name = "puntos", columnDefinition = "INTEGER DEFAULT 0")
     private Integer puntos = 0;
-
-    // Para evitar referencia circular - almacenar solo IDs de eventos
-    @ElementCollection
-    @CollectionTable(name = "usuario_eventos", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Column(name = "evento_id")
-    private List<Integer> eventosIds;
 }

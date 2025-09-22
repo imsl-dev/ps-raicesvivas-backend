@@ -11,7 +11,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: none 
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -21,16 +21,15 @@ spring:
   sql:
     init:
       mode: always
-      schema-locations: classpath:schema.sql
+      # Solo ejecutar data.sql
+      schema-locations:
       data-locations: classpath:data.sql
-      continue-on-error: false
-      separator: ";"  # AGREGADO: Para manejar correctamente los scripts
 
-# Configuración del servidor
+# ConfiguraciÃ³n del servidor (opcional)
 server:
   port: 8080
 
-# Configuración de logging
+# ConfiguraciÃ³n de logging (opcional)
 logging:
   level:
     com.raicesvivas.backend: DEBUG
