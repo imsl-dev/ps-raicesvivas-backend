@@ -30,7 +30,7 @@ public class Usuario {
     private TipoDocumento tipoDocumento;
 
     @Column(name = "nro_doc", nullable = false, unique = true, length = 20)
-    private String nroDoc;
+    private String nroDocumento;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rol", nullable = false)
