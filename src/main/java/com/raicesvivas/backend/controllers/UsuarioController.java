@@ -17,9 +17,9 @@ public class UsuarioController {
 
     private final ModelMapper mapper;
 
-    public Usuario crearUsuario(NuevoUsuarioDTO dto) {
-        Usuario nuevoUsuario = mapper.map(dto, Usuario.class);
-        return nuevoUsuario;
-
-    }
+//    public Usuario crearUsuario(NuevoUsuarioDTO dto) {
+//        Usuario nuevoUsuario = mapper.map(dto, Usuario.class);
+//        return nuevoUsuario;
+//
+//    }
 }

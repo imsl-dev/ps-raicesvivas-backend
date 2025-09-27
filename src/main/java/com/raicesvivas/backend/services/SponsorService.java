@@ -3,12 +3,9 @@ package com.raicesvivas.backend.services;
 import com.raicesvivas.backend.models.dtos.SponsorDto;
 import com.raicesvivas.backend.models.entities.Sponsor;
 import com.raicesvivas.backend.repositories.SponsorRepository;
-import com.raicesvivas.backend.repositories.auxiliar.ProvinciaRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +21,15 @@ public class SponsorService {
     public Sponsor getSponsorById(int id) {
         return sponsorRepository.findById(id).get();
     }
-    public Sponsor saveSponsor(SponsorDto sponsorDto) {}
-    public Sponsor updateSponsor(SponsorDto sponsorDto){}
-    public int deleteSponsorById(int id) {}
+    public Sponsor saveSponsor(SponsorDto sponsorDto) {
+        return sponsorRepository.save(modelMapper.map(sponsorDto, Sponsor.class));
+    }
+    public Sponsor updateSponsor(SponsorDto sponsorDto){
+        Sponsor sponsor = modelMapper.map(sponsorDto, Sponsor.class);
+        return sponsorRepository.save(sponsor);
+    }
+    public int deleteSponsorById(int id) {
+        sponsorRepository.deleteById(id);
+        return id;
+    }
 }
