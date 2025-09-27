@@ -20,11 +20,11 @@ public class SponsorService {
     public List<Sponsor> getAllSponsors() {
         return sponsorRepository.findAll();
     }
-
-    public Sponsor getSponsorById(int id) {
-        return sponsorRepository.findById(id).get();
-    }
-    public Sponsor saveSponsor(SponsorDto sponsorDto) {}
-    public Sponsor updateSponsor(SponsorDto sponsorDto){}
-    public int deleteSponsorById(int id) {}
+//
+//    public Sponsor getSponsorById(int id) {
+//        return sponsorRepository.findById(id).get();
+//    }
+//    public Sponsor saveSponsor(SponsorDto sponsorDto) {}
+//    public Sponsor updateSponsor(SponsorDto sponsorDto){}
+//    public int deleteSponsorById(int id) {}
 }

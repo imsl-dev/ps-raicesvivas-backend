@@ -8,21 +8,21 @@ import jakarta.validation.constraints.NotNull;
 public class NuevoUsuarioDTO {
 
     @NotBlank
-    private String nombre;
+    public String nombre;
 
     @NotBlank
-    private String apellido;
+    public String apellido;
 
     @NotNull
-    private TipoDocumento tipoDocumento;
+    public TipoDocumento tipoDocumento;
 
     @NotBlank
-    private String nroDocumento;
+    public String nroDocumento;
 
     @NotNull
-    private RolUsuario rol;
+    public RolUsuario rol;
 
     @NotBlank
-    private Integer idProvincia;
+    public Integer idProvincia;
 
 }
