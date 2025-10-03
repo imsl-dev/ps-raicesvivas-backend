@@ -1,9 +1,8 @@
-package com.raicesvivas.backend.controllers;
+package com.raicesvivas.backend.controllers.testControllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/ping")

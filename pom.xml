@@ -30,20 +30,20 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-		<dependency>
+		<dependency> <!-- DATA JPA -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<dependency>
+		<dependency> <!-- VALIDATIONS -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-		<dependency>
+		<dependency> <!--STARTER WEB -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<dependency>
+		<dependency> <!-- DEV TOOLS -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
@@ -54,7 +54,7 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
+		<dependency> <!-- LOMBOK -->
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.42</version>
@@ -65,15 +65,19 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<dependency> <!-- MODEL MAPPER -->
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>3.2.4</version>
 		</dependency>
-		<dependency>
+		<dependency> <!-- SPRING DOC -->
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.2.0</version>
+		</dependency>
+		<dependency> <!-- SPRING MAIL -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 	</dependencies>

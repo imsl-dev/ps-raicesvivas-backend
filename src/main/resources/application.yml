@@ -25,6 +25,21 @@ spring:
       schema-locations:
       data-locations: classpath:data.sql
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties: # Propiedades adicionales del protocolo SMTP
+      mail:
+        smtp:
+          auth: true               # Habilita autenticación SMTP (usuario/contraseña)
+          starttls:
+            enable: true           # Habilita encriptación TLS para seguridad
+          connectiontimeout: 5000  # Tiempo máximo (ms) para conectar al servidor
+          timeout: 5000            # Tiempo máximo (ms) para respuesta del servidor
+          writetimeout: 5000       # Tiempo máximo (ms) para enviar datos
+
 # Configuración del servidor (opcional)
 server:
   port: 8080
