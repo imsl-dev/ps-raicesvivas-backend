@@ -4,7 +4,10 @@ import com.raicesvivas.backend.models.enums.RolUsuario;
 import com.raicesvivas.backend.models.enums.TipoDocumento;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.Data;
 
+@Data
 public class NuevoUsuarioDTO {
 
     @NotBlank
@@ -19,10 +22,8 @@ public class NuevoUsuarioDTO {
     @NotBlank
     private String nroDocumento;
 
-    @NotNull
-    private RolUsuario rol;
-
-    @NotBlank
+    @NotNull(message = "Provincia is required")
+    @Positive(message = "El id provincia debe ser un numero positivo")
     private Integer idProvincia;
 
 }
