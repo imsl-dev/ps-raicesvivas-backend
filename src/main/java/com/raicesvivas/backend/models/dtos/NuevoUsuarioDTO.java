@@ -14,6 +14,13 @@ public class NuevoUsuarioDTO {
     private String nombre;
 
     @NotBlank
+    private String email;
+
+    @NotBlank
+
+    private String password;
+
+    @NotBlank
     private String apellido;
 
     @NotNull

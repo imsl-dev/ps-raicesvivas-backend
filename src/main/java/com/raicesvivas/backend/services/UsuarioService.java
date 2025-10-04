@@ -30,6 +30,7 @@ public class UsuarioService {
         Usuario nuevoUsuario = mapper.map(dto, Usuario.class);
 
         nuevoUsuario.setRol(RolUsuario.USUARIO);
+        nuevoUsuario.setId(null);
         System.out.println("Usuario before setting provincia:"+nuevoUsuario);
         //find provincia by id
         Integer idProvincia = dto.getIdProvincia();
