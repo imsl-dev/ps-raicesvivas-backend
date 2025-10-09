@@ -13,6 +13,8 @@ public class SponsorDto {
 
     private String nombre;
 
+    private String linkDominio;
+
     private String rutaImg1;
 
     private String rutaImg2;

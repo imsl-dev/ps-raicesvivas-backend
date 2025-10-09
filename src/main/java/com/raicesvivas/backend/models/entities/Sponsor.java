@@ -19,6 +19,9 @@ public class Sponsor {
     @Column(name = "nombre", nullable = false, length = 255)
     private String nombre;
 
+    @Column(name = "link_dominio", nullable = false, length = 500)
+    private String linkDominio;
+
     @Column(name = "ruta_img1", columnDefinition = "TEXT")
     private String rutaImg1;
 
