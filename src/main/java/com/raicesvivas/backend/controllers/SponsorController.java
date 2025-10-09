@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sponsors")
+@RequestMapping("/api/sponsors")
 @RequiredArgsConstructor
 public class SponsorController {
 
