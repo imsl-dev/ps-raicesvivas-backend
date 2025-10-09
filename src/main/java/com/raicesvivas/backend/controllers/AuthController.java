@@ -24,7 +24,7 @@ public class AuthController {
      * @param password password del usuario
      * @return rol del usuario
      * */
-    @GetMapping()
+    @GetMapping("/login")
     public RolUsuario intentarLogin(@RequestParam String email, @RequestParam String password) {
 
         Usuario findUsuario = usuarioRepository
@@ -33,5 +33,12 @@ public class AuthController {
 
         return findUsuario.getRol();
 
+    }
+
+    @GetMapping("/email/disponible")
+    public boolean verificarEmailDisponible(@RequestParam String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        System.out.println("Usuario: "+usuario);
+        return usuario == null;
     }
 }
