@@ -1,7 +1,7 @@
 package com.raicesvivas.backend.controllers;
 
-import com.raicesvivas.backend.models.dtos.EventoDto;
-import com.raicesvivas.backend.models.entities.Evento;
+import com.raicesvivas.backend.models.dtos.EventoResponseDto;
+import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
 import com.raicesvivas.backend.services.EventoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,15 +19,15 @@ public class EventoController {
     private final EventoService eventoService;
 
     @GetMapping
-    public ResponseEntity<List<Evento>> getAllEventos() {
-        List<Evento> eventos = eventoService.getAllEventos();
+    public ResponseEntity<List<EventoResponseDto>> getAllEventos() {
+        List<EventoResponseDto> eventos = eventoService.getAllEventos();
         return ResponseEntity.ok(eventos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Evento> getEventoById(@PathVariable Integer id) {
+    public ResponseEntity<EventoResponseDto> getEventoById(@PathVariable Integer id) {
         try {
-            Evento evento = eventoService.getEventoById(id);
+            EventoResponseDto evento = eventoService.getEventoById(id);
             return ResponseEntity.ok(evento);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -35,9 +35,9 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<Evento> createEvento(@Valid @RequestBody EventoDto eventoDto) {
+    public ResponseEntity<EventoResponseDto> createEvento(@Valid @RequestBody EventoRequestDto eventoDto) {
         try {
-            Evento newEvento = eventoService.saveEvento(eventoDto);
+            EventoResponseDto newEvento = eventoService.saveEvento(eventoDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(newEvento);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -45,10 +45,10 @@ public class EventoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Evento> updateEvento(@PathVariable Integer id, @Valid @RequestBody EventoDto eventoDto) {
+    public ResponseEntity<EventoResponseDto> updateEvento(@PathVariable Integer id, @Valid @RequestBody EventoRequestDto eventoDto) {
         try {
             eventoDto.setId(id);
-            Evento updatedEvento = eventoService.updateEvento(eventoDto);
+            EventoResponseDto updatedEvento = eventoService.updateEvento(eventoDto);
             return ResponseEntity.ok(updatedEvento);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

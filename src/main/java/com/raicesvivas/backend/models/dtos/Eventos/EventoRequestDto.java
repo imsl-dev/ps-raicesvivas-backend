@@ -1,4 +1,4 @@
-package com.raicesvivas.backend.models.dtos;
+package com.raicesvivas.backend.models.dtos.Eventos;
 
 import com.raicesvivas.backend.models.enums.EstadoEvento;
 import com.raicesvivas.backend.models.enums.TipoEvento;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventoDto {
+public class EventoRequestDto {
 
     private Integer id;
 
