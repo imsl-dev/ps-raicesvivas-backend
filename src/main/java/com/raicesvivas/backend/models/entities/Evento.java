@@ -50,7 +50,7 @@ public class Evento {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "ruta_img", length = 500)
+    @Column(name = "ruta_img", columnDefinition = "TEXT")
     private String rutaImg;
 
     @Column(name = "direccion", length = 500)
