@@ -15,7 +15,7 @@ public class SponsorService {
     private final ModelMapper modelMapper;
 
     public List<Sponsor> getAllSponsors() {
-        return sponsorRepository.findAll();
+        return sponsorRepository.findByActivo(true);
     }
 
     public Sponsor getSponsorById(int id) {
@@ -28,8 +28,9 @@ public class SponsorService {
         Sponsor sponsor = modelMapper.map(sponsorDto, Sponsor.class);
         return sponsorRepository.save(sponsor);
     }
-    public int deleteSponsorById(int id) {
-        sponsorRepository.deleteById(id);
-        return id;
+    public Sponsor deleteSponsorById(int id) {
+        Sponsor sponsor = sponsorRepository.findById(id).get();
+        sponsor.setActivo(false);
+        return sponsorRepository.save(sponsor);
     }
 }

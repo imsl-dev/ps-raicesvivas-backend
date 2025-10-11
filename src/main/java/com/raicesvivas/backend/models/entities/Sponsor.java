@@ -28,4 +28,7 @@ public class Sponsor {
     @Column(name = "ruta_img2", columnDefinition = "TEXT")
     private String rutaImg2;
 
+    @Column(name = "activo")
+    private Boolean activo;
+
 }
