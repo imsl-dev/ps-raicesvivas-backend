@@ -39,6 +39,12 @@ public class EventoService {
                 .collect(Collectors.toList());
     }
 
+    public List<EventoResponseDto> getAllEventosOrganizador(Integer idOrganizador) {
+        return eventoRepository.findByOrganizadorId(idOrganizador).stream()
+                .map(this::convertirAResponse)
+                .collect(Collectors.toList());
+    }
+
     public EventoResponseDto getEventoById(Integer id) {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento con ID: " + id + " no encontrado"));

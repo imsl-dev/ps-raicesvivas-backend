@@ -24,6 +24,16 @@ public class EventoController {
         return ResponseEntity.ok(eventos);
     }
 
+    @GetMapping("/organizador/{id}")
+    public ResponseEntity<List<EventoResponseDto>> getAllEventosOrganizador(@PathVariable Integer id) {
+        try{
+            List<EventoResponseDto> eventos = eventoService.getAllEventosOrganizador(id);
+            return ResponseEntity.ok(eventos);
+        } catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EventoResponseDto> getEventoById(@PathVariable Integer id) {
         try {
