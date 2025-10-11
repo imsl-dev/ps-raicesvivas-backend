@@ -31,15 +31,12 @@ public class UsuarioService {
 
         nuevoUsuario.setRol(RolUsuario.USUARIO);
         nuevoUsuario.setId(null);
-        System.out.println("Usuario before setting provincia:"+nuevoUsuario);
         //find provincia by id
         Integer idProvincia = dto.getIdProvincia();
         Provincia provincia = provinciaRepository.findById(idProvincia).orElseThrow(()
                 -> new EntityNotFoundException("Provincia con ID: "+idProvincia + " no encontrada"));
 
         nuevoUsuario.setProvincia(provincia);
-
-        System.out.println(nuevoUsuario);
 
         return usuarioRepository.save(nuevoUsuario);
     }

@@ -1,5 +1,6 @@
 package com.raicesvivas.backend.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
 import com.raicesvivas.backend.models.enums.RolUsuario;
 import com.raicesvivas.backend.models.enums.TipoDocumento;
@@ -42,7 +43,7 @@ public class Usuario {
     @Column(name = "rol", nullable = false)
     private RolUsuario rol;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "provincia_id", referencedColumnName = "id", nullable = false)
     private Provincia provincia;
 
