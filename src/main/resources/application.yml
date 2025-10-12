@@ -64,7 +64,7 @@ logging:
 # Configuración de tareas programadas
 scheduler:
   eventos:
-    actualizar-estados-rate: 60000  # 60000     # 1 minuto en milisegundos
+    actualizar-estados-rate: 600000  # 60000     # 1 minuto en milisegundos
                                      # 300000    # 5 minutos en milisegundos
                                      # 600000    # 10 minutos en milisegundos
                                      # 1800000   # 30 minutos en milisegundos
