@@ -2,6 +2,8 @@ package com.raicesvivas.backend.controllers;
 
 import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
+import com.raicesvivas.backend.models.entities.Inscripcion;
+import com.raicesvivas.backend.models.enums.EstadoInscripcion;
 import com.raicesvivas.backend.services.EventoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -72,6 +74,39 @@ public class EventoController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/validarInscripcion")
+    public ResponseEntity<Boolean> validarInscripcion(
+            @RequestParam Integer usuarioId,
+            @RequestParam Integer eventoId) {
+        boolean inscrito = eventoService.validarInscripcionEvento(usuarioId, eventoId);
+        return ResponseEntity.ok(inscrito);
+    }
+
+    @PostMapping("/inscribirse")
+    public ResponseEntity<Inscripcion> inscribirseEvento(
+            @RequestParam Integer usuarioId,
+            @RequestParam Integer eventoId) {
+        try {
+            Inscripcion inscripcion = eventoService.inscribirseEvento(usuarioId, eventoId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(inscripcion);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<Inscripcion> modificarEstadoInscripcionEvento(
+            @RequestParam Integer usuarioId,
+            @RequestParam Integer eventoId,
+            @RequestParam EstadoInscripcion estado) {
+        try {
+            Inscripcion inscripcion = eventoService.modificarAsistenciaEvento(usuarioId, eventoId, estado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(inscripcion);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 }

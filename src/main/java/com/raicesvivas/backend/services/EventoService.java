@@ -3,11 +3,14 @@ package com.raicesvivas.backend.services;
 import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
 import com.raicesvivas.backend.models.entities.Evento;
+import com.raicesvivas.backend.models.entities.Inscripcion;
 import com.raicesvivas.backend.models.entities.Sponsor;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.entities.auxiliar.CuentaBancaria;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
+import com.raicesvivas.backend.models.enums.EstadoInscripcion;
 import com.raicesvivas.backend.repositories.EventoRepository;
+import com.raicesvivas.backend.repositories.InscripcionRepository;
 import com.raicesvivas.backend.repositories.SponsorRepository;
 import com.raicesvivas.backend.repositories.UsuarioRepository;
 import com.raicesvivas.backend.repositories.auxiliar.CuentaBancariaRepository;
@@ -15,8 +18,10 @@ import com.raicesvivas.backend.repositories.auxiliar.ProvinciaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +29,7 @@ import java.util.stream.Collectors;
 public class EventoService {
 
     private final EventoRepository eventoRepository;
+    private final InscripcionRepository inscripcionRepository;
     private final ProvinciaRepository provinciaRepository;
     private final UsuarioRepository usuarioRepository;
     private final SponsorRepository sponsorRepository;
@@ -76,6 +82,43 @@ public class EventoService {
             throw new EntityNotFoundException("Evento con ID: " + id + " no encontrado");
         }
         eventoRepository.deleteById(id);
+    }
+
+    public boolean validarInscripcionEvento(Integer usuarioId, Integer eventoId){
+        Optional<Inscripcion> inscripcion = inscripcionRepository.findByUsuarioIdAndEventoId(usuarioId, eventoId);
+        return inscripcion.isPresent();
+    }
+
+    public Inscripcion inscribirseEvento(Integer usuarioId, Integer eventoId) {
+        if (validarInscripcionEvento(usuarioId, eventoId)) {
+            throw new IllegalStateException("Ya te encuentras inscripto a este evento");
+        }
+        else {
+            Inscripcion inscripcion = new Inscripcion();
+            inscripcion.setEventoId(eventoId);
+            inscripcion.setUsuarioId(usuarioId);
+            inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+            return inscripcionRepository.save(inscripcion);
+        }
+    }
+
+    public Inscripcion modificarAsistenciaEvento(Integer usuarioId, Integer eventoId, EstadoInscripcion estado) {
+        Optional<Inscripcion> inscripcionOpc = inscripcionRepository.findByUsuarioIdAndEventoId(usuarioId, eventoId);
+        // Validamos que el evento exista
+        if (inscripcionOpc.isPresent()) {
+            // Gestiona inscripión y cancelación
+            if (EstadoInscripcion.PENDIENTE.equals(estado) || EstadoInscripcion.CANCELADO.equals(estado)) {
+                Inscripcion inscripcion = inscripcionOpc.get();
+                inscripcion.setEstado(estado);
+                return inscripcionRepository.save(inscripcion);
+            }
+            // Gestiona las asistencias y asignación de puntos
+            else {
+                return gestionarAsistencia(inscripcionOpc.get(), estado);
+            }
+        }
+        else {
+            throw new IllegalStateException("No te encuentras inscripto a este evento");}
     }
 
     // ====================================
@@ -172,5 +215,46 @@ public class EventoService {
         }
 
         return dto;
+    }
+
+    // Gestiona las asistencias y asignación de puntos
+    @Transactional
+    protected Inscripcion gestionarAsistencia(Inscripcion inscripcion, EstadoInscripcion asistencia){
+        Optional<Evento> eventoOpc = eventoRepository.findById(inscripcion.getEventoId());
+        Optional<Usuario> usuarioOpc = usuarioRepository.findById(inscripcion.getUsuarioId());
+        if (eventoOpc.isPresent() && usuarioOpc.isPresent()) {
+            Evento evento = eventoOpc.get();
+            Usuario usuario = usuarioOpc.get();
+            Integer puntosEvento = evento.getPuntosAsistencia() != null ? evento.getPuntosAsistencia() : 0;
+
+            // ASIGNACIÓN DE PUNTOS POR ASISTENCIA
+            if (EstadoInscripcion.PRESENTE.equals(asistencia)) {
+                usuario.setPuntos(usuario.getPuntos() + puntosEvento);
+                inscripcion.setEstado(asistencia);
+                usuarioRepository.save(usuario);
+                return inscripcionRepository.save(inscripcion);
+            }
+
+            // GESTIÓN DE AUSENTES
+            else if (EstadoInscripcion.AUSENTE.equals(asistencia)) {
+                // Flujo 1 - El usuario nunca asistió, por lo que no se asignaron puntos incorrectamente
+                if (EstadoInscripcion.PENDIENTE.equals(inscripcion.getEstado())) {
+                    inscripcion.setEstado(asistencia);
+                    return inscripcionRepository.save(inscripcion);
+                }
+
+                // Flujo 2 - Se asignó presente de forma errónea y ahora se deben restar los puntos
+                else if (EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado())) {
+                    usuario.setPuntos(usuario.getPuntos() - puntosEvento);
+                    inscripcion.setEstado(asistencia);
+                    usuarioRepository.save(usuario);
+                    return inscripcionRepository.save(inscripcion);
+                }
+                else throw new IllegalStateException("El estado: " + inscripcion.getEstado() + " no puede ser modificado a: "+asistencia);
+            }
+            else throw new IllegalStateException("El estado: " + inscripcion.getEstado() + " no puede ser modificado a: "+asistencia);
+        }
+        else {
+            throw new IllegalStateException("No se encuentra el evento o usuario. Evento ID: " + inscripcion.getEventoId() + " Usuario ID: " + inscripcion.getUsuarioId());}
     }
 }
