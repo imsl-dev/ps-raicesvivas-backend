@@ -40,4 +40,11 @@ public class UsuarioService {
 
         return usuarioRepository.save(nuevoUsuario);
     }
+
+    public Usuario getUsuarioById(Integer id) {
+
+        return usuarioRepository.findById(id).orElseThrow(()->
+            new EntityNotFoundException("Usuario con ID "+id+" no encontrado")
+        );
+    }
 }

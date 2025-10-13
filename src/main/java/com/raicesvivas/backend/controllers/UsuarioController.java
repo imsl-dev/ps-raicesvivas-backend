@@ -30,8 +30,13 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.guardarUsuario(dto));
     }
 
-    @GetMapping()
+    @GetMapping("/todos")
     public ResponseEntity<List<Usuario>> getUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> getUsuario(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.getUsuarioById(id));
     }
 }

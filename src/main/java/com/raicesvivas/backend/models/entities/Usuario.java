@@ -36,7 +36,7 @@ public class Usuario {
     @Column(name = "tipo_documento", nullable = false)
     private TipoDocumento tipoDocumento;
 
-    @Column(name = "nro_doc", nullable = false, unique = true, length = 20)
+    @Column(name = "nro_doc", nullable = false, length = 20)
     private String nroDocumento;
 
     @Enumerated(EnumType.STRING)
@@ -49,4 +49,7 @@ public class Usuario {
 
     @Column(name = "puntos", columnDefinition = "INTEGER DEFAULT 0")
     private Integer puntos = 0;
+
+    @Column(name = "ruta_img", columnDefinition = "TEXT")
+    private String rutaImg;
 }

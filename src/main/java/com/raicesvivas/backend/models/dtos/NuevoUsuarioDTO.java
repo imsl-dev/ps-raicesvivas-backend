@@ -33,4 +33,6 @@ public class NuevoUsuarioDTO {
     @Positive(message = "El id provincia debe ser un numero positivo")
     private Integer idProvincia;
 
+    private String rutaImg;
+
 }
