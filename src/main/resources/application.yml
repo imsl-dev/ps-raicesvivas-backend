@@ -69,3 +69,12 @@ scheduler:
                                      # 600000    # 10 minutos en milisegundos
                                      # 1800000   # 30 minutos en milisegundos
                                      # 3600000   # 1 hora en milisegundos
+
+mercadopago:
+  access-token: ${MERCADOPAGO_ACCESS_TOKEN}
+  public-key: ${MERCADOPAGO_PUBLIC_KEY}
+  webhook-secret: ${MERCADOPAGO_WEBHOOK_SECRET:}
+  urls:
+    success: ${MERCADOPAGO_SUCCESS_URL:http://localhost:4200/pago/success}
+    failure: ${MERCADOPAGO_FAILURE_URL:http://localhost:4200/pago/failure}
+    pending: ${MERCADOPAGO_PENDING_URL:http://localhost:4200/pago/pending}

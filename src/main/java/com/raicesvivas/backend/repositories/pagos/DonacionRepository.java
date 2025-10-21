@@ -1,4 +1,4 @@
-package com.raicesvivas.backend.repositories;
+package com.raicesvivas.backend.repositories.pagos;
 
 import com.raicesvivas.backend.models.entities.Donacion;
 import org.springframework.data.jpa.repository.JpaRepository;
