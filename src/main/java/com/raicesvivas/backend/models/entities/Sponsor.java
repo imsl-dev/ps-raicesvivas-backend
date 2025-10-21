@@ -19,11 +19,16 @@ public class Sponsor {
     @Column(name = "nombre", nullable = false, length = 255)
     private String nombre;
 
-    @Column(name = "ruta_img1", length = 500)
+    @Column(name = "link_dominio", nullable = false, length = 500)
+    private String linkDominio;
+
+    @Column(name = "ruta_img1", columnDefinition = "TEXT")
     private String rutaImg1;
 
-    @Column(name = "ruta_img2", length = 500)
+    @Column(name = "ruta_img2", columnDefinition = "TEXT")
     private String rutaImg2;
 
-    // Ya no necesita lista de eventos - relación manejada desde Evento
+    @Column(name = "activo")
+    private Boolean activo;
+
 }

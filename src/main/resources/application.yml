@@ -11,7 +11,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -25,6 +25,21 @@ spring:
       schema-locations:
       data-locations: classpath:data.sql
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties: # Propiedades adicionales del protocolo SMTP
+      mail:
+        smtp:
+          auth: true               # Habilita autenticación SMTP (usuario/contraseña)
+          starttls:
+            enable: true           # Habilita encriptación TLS para seguridad
+          connectiontimeout: 5000  # Tiempo máximo (ms) para conectar al servidor
+          timeout: 5000            # Tiempo máximo (ms) para respuesta del servidor
+          writetimeout: 5000       # Tiempo máximo (ms) para enviar datos
+
 # Configuración del servidor (opcional)
 server:
   port: 8080
@@ -33,19 +48,9 @@ server:
 springdoc:
   api-docs:
     enabled: true
-    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    try-it-out-enabled: true
-    operations-sorter: method
-    tags-sorter: alpha
-    filter: false
-  show-actuator: false
-  group-configs:
-    - group: 'raices-vivas-api'
-      paths-to-match: '/api/**'
-      packages-to-scan: com.raicesvivas.backend
 
 
 # Configuración de logging (opcional)
@@ -54,3 +59,22 @@ logging:
     com.raicesvivas.backend: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+
+# Configuración de tareas programadas
+scheduler:
+  eventos:
+    actualizar-estados-rate: 600000  # 60000     # 1 minuto en milisegundos
+                                     # 300000    # 5 minutos en milisegundos
+                                     # 600000    # 10 minutos en milisegundos
+                                     # 1800000   # 30 minutos en milisegundos
+                                     # 3600000   # 1 hora en milisegundos
+
+mercadopago:
+  access-token: ${MERCADOPAGO_ACCESS_TOKEN}
+  public-key: ${MERCADOPAGO_PUBLIC_KEY}
+  webhook-secret: ${MERCADOPAGO_WEBHOOK_SECRET:}
+  urls:
+    success: ${MERCADOPAGO_SUCCESS_URL:http://localhost:4200/pago/success}
+    failure: ${MERCADOPAGO_FAILURE_URL:http://localhost:4200/pago/failure}
+    pending: ${MERCADOPAGO_PENDING_URL:http://localhost:4200/pago/pending}

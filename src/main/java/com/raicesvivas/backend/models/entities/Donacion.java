@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "donaciones")
@@ -23,6 +24,9 @@ public class Donacion {
 
     @Column(name = "usuario_id", nullable = false)
     private Integer usuarioId;
+
+    @Column(name = "fecha", nullable = false)
+    private LocalDateTime fecha;
 
     @Column(name = "monto", nullable = false, precision = 10, scale = 2)
     private BigDecimal monto;

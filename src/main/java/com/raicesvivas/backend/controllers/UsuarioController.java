@@ -1,11 +1,42 @@
 package com.raicesvivas.backend.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.raicesvivas.backend.models.dtos.NuevoUsuarioDTO;
+import com.raicesvivas.backend.models.entities.Usuario;
+import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
+import com.raicesvivas.backend.models.enums.RolUsuario;
+import com.raicesvivas.backend.repositories.auxiliar.ProvinciaRepository;
+import com.raicesvivas.backend.services.UsuarioService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+
+    private final ProvinciaRepository provinciaRepo;
+
+    private final ModelMapper mapper;
+    @PostMapping()
+    public ResponseEntity<Usuario> crearUsuario(@Valid @RequestBody NuevoUsuarioDTO dto) {
+
+        return ResponseEntity.ok(usuarioService.guardarUsuario(dto));
+    }
+
+    @GetMapping("/todos")
+    public ResponseEntity<List<Usuario>> getUsuarios() {
+        return ResponseEntity.ok(usuarioService.getAllUsuarios());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> getUsuario(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.getUsuarioById(id));
+    }
 }

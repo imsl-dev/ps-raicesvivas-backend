@@ -1,5 +1,6 @@
 package com.raicesvivas.backend.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
 import com.raicesvivas.backend.models.enums.RolUsuario;
 import com.raicesvivas.backend.models.enums.TipoDocumento;
@@ -19,6 +20,12 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name="email",nullable = false, length = 255)
+    private String email;
+
+    @Column(name="password",nullable = false,length = 255)
+    private String password;
+
     @Column(name = "nombre", nullable = false, length = 255)
     private String nombre;
 
@@ -29,17 +36,20 @@ public class Usuario {
     @Column(name = "tipo_documento", nullable = false)
     private TipoDocumento tipoDocumento;
 
-    @Column(name = "nro_doc", nullable = false, unique = true, length = 20)
-    private String nroDoc;
+    @Column(name = "nro_doc", nullable = false, length = 20)
+    private String nroDocumento;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rol", nullable = false)
     private RolUsuario rol;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "provincia_id", referencedColumnName = "id", nullable = false)
     private Provincia provincia;
 
     @Column(name = "puntos", columnDefinition = "INTEGER DEFAULT 0")
     private Integer puntos = 0;
+
+    @Column(name = "ruta_img", columnDefinition = "TEXT")
+    private String rutaImg;
 }
