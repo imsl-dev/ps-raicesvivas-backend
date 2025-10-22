@@ -27,9 +27,7 @@ public class PeticionOrganizadorService {
     //  if (usuarioTienePeticion(dto.getIdUsuario())) {
     //      throw new BadRequestException("Este usuario ya tiene una peticion activa");
     //  }
-
-
-    }
+    //}
 
 
 }
