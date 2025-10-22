@@ -1,8 +1,10 @@
 package com.raicesvivas.backend.controllers;
 
 import com.raicesvivas.backend.models.dtos.UsuarioLoginDTO;
+import com.raicesvivas.backend.models.entities.PeticionOrganizador;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.enums.RolUsuario;
+import com.raicesvivas.backend.repositories.PeticionOrganizadorRepository;
 import com.raicesvivas.backend.repositories.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ public class AuthController {
 
     private final ModelMapper mapper;
 
+    private final PeticionOrganizadorRepository peticionOrganizadorRepository;
+
     /**Intenta realizar un login con email y password
      * Si los campos no coinciden -> EntityNotFound
      * @param email email del usuario
@@ -38,9 +42,18 @@ public class AuthController {
                 .findUserByEmailAndPassword(email,password)
                 .orElseThrow(() ->new EntityNotFoundException("El Email o la contraseña son incorrectos"));
 
+        //buscar si tiene peticion activa
 
+        PeticionOrganizador peticion = peticionOrganizadorRepository.findByUsuarioId(findUsuario.getId());
 
-        return mapper.map(findUsuario, UsuarioLoginDTO.class);
+        UsuarioLoginDTO result =mapper.map(findUsuario, UsuarioLoginDTO.class);
+
+        if (peticion != null) {
+            result.setEstadoPeticionOrganizador(peticion.getEstadoPeticion());
+        }
+        else result.setEstadoPeticionOrganizador(null);
+
+        return result;
 
     }
 
