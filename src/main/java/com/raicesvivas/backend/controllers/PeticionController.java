@@ -16,8 +16,8 @@ public class PeticionController {
 
     private final PeticionOrganizadorService peticionService;
 
-    @PostMapping()
-    public ResponseEntity<PeticionOrganizadorDTO> enviarPeticion(@RequestBody PeticionOrganizadorDTO dto) {
-        return ResponseEntity.ok(peticionService.)
-    }
+    //@PostMapping()
+    //public ResponseEntity<PeticionOrganizadorDTO> enviarPeticion(@RequestBody PeticionOrganizadorDTO dto) {
+    //    return ResponseEntity.ok(peticionService.)
+    //}
 }
