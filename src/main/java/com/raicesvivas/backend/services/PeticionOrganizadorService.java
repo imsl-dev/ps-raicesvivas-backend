@@ -22,11 +22,11 @@ public class PeticionOrganizadorService {
         return peticion != null;
     }
 
-    public PeticionOrganizador postPeticion(PeticionOrganizadorDTO dto) throws BadRequestException {
-
-        if (usuarioTienePeticion(dto.getIdUsuario())) {
-            throw new BadRequestException("Este usuario ya tiene una peticion activa");
-        }
+    //public PeticionOrganizador postPeticion(PeticionOrganizadorDTO dto) throws BadRequestException {
+    //
+    //  if (usuarioTienePeticion(dto.getIdUsuario())) {
+    //      throw new BadRequestException("Este usuario ya tiene una peticion activa");
+    //  }
 
 
     }
