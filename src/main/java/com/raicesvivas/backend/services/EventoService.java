@@ -8,6 +8,7 @@ import com.raicesvivas.backend.models.entities.Sponsor;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.entities.auxiliar.CuentaBancaria;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
+import com.raicesvivas.backend.models.enums.EstadoEvento;
 import com.raicesvivas.backend.models.enums.EstadoInscripcion;
 import com.raicesvivas.backend.repositories.EventoRepository;
 import com.raicesvivas.backend.repositories.InscripcionRepository;
@@ -78,10 +79,10 @@ public class EventoService {
     }
 
     public void deleteEventoById(Integer id) {
-        if (!eventoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Evento con ID: " + id + " no encontrado");
-        }
-        eventoRepository.deleteById(id);
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento con ID: " + id + " no encontrado"));
+        evento.setEstado(EstadoEvento.CANCELADO);
+        eventoRepository.save(evento);
     }
 
     public boolean validarInscripcionEvento(Integer usuarioId, Integer eventoId){
