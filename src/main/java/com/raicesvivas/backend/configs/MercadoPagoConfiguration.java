@@ -30,6 +30,9 @@ public class MercadoPagoConfiguration {  // Renombrado para evitar conflicto
     @Value("${mercadopago.urls.pending}")
     private String pendingUrl;
 
+    @Value("${mercadopago.notification-url}")  // ✅ Lee desde application.yml
+    private String notificationUrl;
+
     @PostConstruct
     public void init() {
         log.info("=== Configurando MercadoPago ===");
@@ -39,13 +42,14 @@ public class MercadoPagoConfiguration {  // Renombrado para evitar conflicto
         log.info("Success URL: {}", successUrl);
         log.info("Failure URL: {}", failureUrl);
         log.info("Pending URL: {}", pendingUrl);
+        log.info("Notification URL: {}", notificationUrl);
 
         if (accessToken == null || accessToken.isEmpty()) {
             log.error("❌ ACCESS TOKEN NO CONFIGURADO - Verifica las variables de entorno");
             throw new IllegalStateException("MercadoPago Access Token no configurado");
         }
 
-        if (!accessToken.startsWith("TEST-") && !accessToken.startsWith("APP-")) {
+        if (!accessToken.startsWith("APP_USR-") && !accessToken.startsWith("APP-")) {
             log.warn("⚠️ El Access Token no parece ser válido (debe empezar con TEST- o APP-)");
             log.warn("⚠️ Token actual: {}", accessToken); // Ver qué tiene realmente
         }
