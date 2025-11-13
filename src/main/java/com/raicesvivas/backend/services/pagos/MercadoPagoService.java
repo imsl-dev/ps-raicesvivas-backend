@@ -42,12 +42,31 @@ public class MercadoPagoService {
                 .unitPrice(request.getMonto())
                 .build();
 
+        log.info("Construyendo BackUrls:");
+        log.info("  - Success base: {}", mercadoPagoConfiguration.getSuccessUrl());
+        log.info("  - Failure base: {}", mercadoPagoConfiguration.getFailureUrl());
+        log.info("  - Pending base: {}", mercadoPagoConfiguration.getPendingUrl());
+
+        String successUrl = mercadoPagoConfiguration.getSuccessUrl() + "?pagoId=" + pagoId;
+        String failureUrl = mercadoPagoConfiguration.getFailureUrl() + "?pagoId=" + pagoId;
+        String pendingUrl = mercadoPagoConfiguration.getPendingUrl() + "?pagoId=" + pagoId;
+
+        log.info("URLs completas:");
+        log.info("  - Success: {}", successUrl);
+        log.info("  - Failure: {}", failureUrl);
+        log.info("  - Pending: {}", pendingUrl);
+
         // Configurar URLs de retorno
         PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
                 .success(mercadoPagoConfiguration.getSuccessUrl() + "?pagoId=" + pagoId)
                 .failure(mercadoPagoConfiguration.getFailureUrl() + "?pagoId=" + pagoId)
                 .pending(mercadoPagoConfiguration.getPendingUrl() + "?pagoId=" + pagoId)
                 .build();
+
+        log.info("BackUrls configuradas:");
+        log.info("  - Success: {}", mercadoPagoConfiguration.getSuccessUrl() + "?pagoId=" + pagoId);
+        log.info("  - Failure: {}", mercadoPagoConfiguration.getFailureUrl() + "?pagoId=" + pagoId);
+        log.info("  - Pending: {}", mercadoPagoConfiguration.getPendingUrl() + "?pagoId=" + pagoId);
 
         // Construir la preferencia
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
@@ -56,6 +75,7 @@ public class MercadoPagoService {
                 .autoReturn("approved") // Retorno automático cuando se aprueba
                 .externalReference(pagoId.toString())
                 .statementDescriptor("RAICES VIVAS")
+                .notificationUrl(mercadoPagoConfiguration.getNotificationUrl())
                 .build();
 
         // Crear la preferencia en MercadoPago
@@ -76,7 +96,20 @@ public class MercadoPagoService {
             log.error("Error de API de MercadoPago:");
             log.error("Status Code: {}", e.getStatusCode());
             log.error("Message: {}", e.getMessage());
-            log.error("API Response: {}", e.getApiResponse());
+
+            // Mostrar detalles completos del error
+            if (e.getApiResponse() != null) {
+                log.error("API Response Content: {}", e.getApiResponse().getContent());
+                log.error("API Response Status Code: {}", e.getApiResponse().getStatusCode());
+            }
+
+            // Mostrar la preferencia que intentamos crear
+            log.error("Preferencia enviada:");
+            log.error("  - Items: {}", itemRequest);
+            log.error("  - Back URLs: {}", backUrls);
+            log.error("  - External Reference: {}", pagoId);
+            log.error("  - Notification URL: {}", mercadoPagoConfiguration.getNotificationUrl());
+
             throw e;
         }
     }
