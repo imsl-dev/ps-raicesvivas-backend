@@ -81,3 +81,5 @@ FROM (VALUES
 WHERE NOT EXISTS (
     SELECT 1 FROM eventos e WHERE e.nombre = v.nombre
 );
+-- Evitar problemas de insert cuando se corre data.sql
+SELECT setval('usuarios_id_seq', COALESCE((SELECT MAX(id) FROM usuarios), 1));

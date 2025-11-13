@@ -9,5 +9,4 @@ public class PeticionOrganizadorDTO {
 
     private String mensajeUsuario;
 
-
 }
