@@ -1,5 +1,6 @@
 package com.raicesvivas.backend.controllers;
 
+import com.raicesvivas.backend.models.dtos.ActualizarUsuarioDTO;
 import com.raicesvivas.backend.models.dtos.NuevoUsuarioDTO;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
@@ -38,5 +39,10 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuario(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.getUsuarioById(id));
+    }
+
+    @PatchMapping()
+    public ResponseEntity<Usuario> actualizarUsuario(@RequestBody ActualizarUsuarioDTO dto) {
+        return ResponseEntity.ok(usuarioService.actualizarUsuario(dto));
     }
 }

@@ -2,6 +2,7 @@ package com.raicesvivas.backend.services;
 
 import com.raicesvivas.backend.models.dtos.PeticionOrganizadorDTO;
 import com.raicesvivas.backend.models.entities.PeticionOrganizador;
+import com.raicesvivas.backend.models.enums.EstadoPeticion;
 import com.raicesvivas.backend.repositories.PeticionOrganizadorRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -22,12 +23,23 @@ public class PeticionOrganizadorService {
         return peticion != null;
     }
 
-    //public PeticionOrganizador postPeticion(PeticionOrganizadorDTO dto) throws BadRequestException {
-    //
-    //  if (usuarioTienePeticion(dto.getIdUsuario())) {
-    //      throw new BadRequestException("Este usuario ya tiene una peticion activa");
-    //  }
-    //}
+    public PeticionOrganizador postPeticion(PeticionOrganizadorDTO dto) throws BadRequestException {
+
+
+      if (usuarioTienePeticion(dto.getIdUsuario())) {
+          throw new BadRequestException("Este usuario ya tiene una peticion activa");
+      }
+
+      PeticionOrganizador peticion = mapper.map(dto,PeticionOrganizador.class);
+      peticion.setId(null);
+      peticion.setEstadoPeticion(EstadoPeticion.PENDIENTE);
+
+      return peticionRepository.save(peticion);
+    }
+
+    public PeticionOrganizador getPeticionByUserId(Integer userId) {
+        return peticionRepository.findByUsuarioId(userId);
+    }
 
 
 }

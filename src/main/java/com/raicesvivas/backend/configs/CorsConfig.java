@@ -18,7 +18,7 @@ public class CorsConfig {
                                 "http://localhost:4200",
                                 "https://raicesvivas-frontend.ngrok-free.app"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
