@@ -9,4 +9,6 @@ public class PeticionOrganizadorDTO {
 
     private String mensajeUsuario;
 
+    private String image64;
+
 }
