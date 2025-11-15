@@ -5,6 +5,7 @@ import com.raicesvivas.backend.models.enums.pagos.EstadoPago;
 import com.raicesvivas.backend.models.enums.pagos.TipoPago;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,5 +31,11 @@ public interface PagoRepository extends JpaRepository<Pago, Integer> {
             Integer usuarioId,
             Integer eventoId,
             EstadoPago estadoPago
+    );
+
+    List<Pago> findByTipoPagoAndEstadoPagoOrderByFechaCreacionDesc(
+            TipoPago tipoPago,
+            EstadoPago estadoPago,
+            Pageable pageable
     );
 }
