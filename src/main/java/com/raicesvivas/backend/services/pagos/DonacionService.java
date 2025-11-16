@@ -54,11 +54,6 @@ public class DonacionService {
         Evento evento = eventoRepository.findById(request.getEventoId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        // Validar monto mínimo
-        if (request.getMonto().compareTo(BigDecimal.valueOf(100)) < 0) {
-            throw new IllegalArgumentException("El monto mínimo de donación es $100");
-        }
-
         // Crear registro de pago como donación
         Pago pago = new Pago();
 

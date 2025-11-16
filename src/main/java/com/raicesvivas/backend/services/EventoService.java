@@ -203,7 +203,10 @@ public class EventoService {
 
         if (evento.getOrganizador() != null) {
             dto.setOrganizadorId(evento.getOrganizador().getId());
-            dto.setOrganizadorNombre(evento.getOrganizador().getNombre() + " " + evento.getOrganizador().getApellido());
+            dto.setOrganizadorNombre(evento.getOrganizador().getNombre());
+            dto.setOrganizadorApellido(evento.getOrganizador().getApellido());
+            dto.setOrganizadorEmail(evento.getOrganizador().getEmail());
+            dto.setOrganizadorRutaImg(evento.getOrganizador().getRutaImg());
         }
 
         if (evento.getSponsor() != null) {

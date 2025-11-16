@@ -50,15 +50,19 @@ public class PagoService {
             Evento evento = eventoRepository.findById(request.getEventoId())
                     .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
 
-            // Verificar si ya existe un pago aprobado para esta inscripción
-            boolean yaExistePago = pagoRepository.existsByUsuarioIdAndEventoIdAndEstadoPago(
-                    request.getUsuarioId(),
-                    request.getEventoId(),
-                    EstadoPago.APROBADO
-            );
+            // Verificar si ya existe un pago de INSCRIPCION aprobado para este evento
+            // (Las donaciones NO deben bloquear la inscripción)
+            if (request.getTipoPago() == TipoPago.INSCRIPCION) {
+                boolean yaExistePagoInscripcion = pagoRepository.existsByUsuarioIdAndEventoIdAndTipoPagoAndEstadoPago(
+                        request.getUsuarioId(),
+                        request.getEventoId(),
+                        TipoPago.INSCRIPCION,
+                        EstadoPago.APROBADO
+                );
 
-            if (yaExistePago) {
-                throw new IllegalStateException("Ya existe un pago aprobado para este evento");
+                if (yaExistePagoInscripcion) {
+                    throw new IllegalStateException("Ya existe un pago de inscripción aprobado para este evento");
+                }
             }
         }
 
@@ -170,8 +174,8 @@ public class PagoService {
      * Verifica si un usuario ya pagó la inscripción a un evento
      */
     public boolean verificarPagoInscripcion(Integer usuarioId, Integer eventoId) {
-        return pagoRepository.existsByUsuarioIdAndEventoIdAndEstadoPago(
-                usuarioId, eventoId, EstadoPago.APROBADO
+        return pagoRepository.existsByUsuarioIdAndEventoIdAndTipoPagoAndEstadoPago(
+                usuarioId, eventoId, TipoPago.INSCRIPCION, EstadoPago.APROBADO
         );
     }
 

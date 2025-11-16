@@ -26,6 +26,9 @@ public class EventoResponseDto {
 
     // Nombres para mostrar (opcional pero útil)
     private String organizadorNombre;
+    private String organizadorApellido;
+    private String organizadorEmail;
+    private String organizadorRutaImg;
     private String provinciaNombre;
     private String sponsorNombre;
 

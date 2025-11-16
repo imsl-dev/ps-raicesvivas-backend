@@ -44,4 +44,11 @@ public interface PagoRepository extends JpaRepository<Pago, Integer> {
             EstadoPago estadoPago,
             Pageable pageable
     );
+
+    boolean existsByUsuarioIdAndEventoIdAndTipoPagoAndEstadoPago(
+            Integer usuarioId,
+            Integer eventoId,
+            TipoPago tipoPago,
+            EstadoPago estadoPago
+    );
 }
