@@ -9,9 +9,11 @@ import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.entities.Pago;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.enums.pagos.EstadoPago;
+import com.raicesvivas.backend.models.enums.pagos.TipoPago;
 import com.raicesvivas.backend.repositories.EventoRepository;
 import com.raicesvivas.backend.repositories.UsuarioRepository;
 import com.raicesvivas.backend.repositories.pagos.PagoRepository;
+import com.raicesvivas.backend.services.EventoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class PagoService {
     private final UsuarioRepository usuarioRepository;
     private final EventoRepository eventoRepository;
     private final MercadoPagoService mercadoPagoService;
+    private final EventoService eventoService;
 
     /**
      * Crea un nuevo pago y genera la preferencia de MercadoPago
@@ -107,6 +110,30 @@ public class PagoService {
 
         // Actualizar estado según el status de MercadoPago
         actualizarEstadoPago(pago, payment);
+
+        // SOLO inscribir automáticamente si el pago es de tipo INSCRIPCION y fue aprobado
+        if (pago.getEstadoPago() == EstadoPago.APROBADO &&
+                pago.getTipoPago() == TipoPago.INSCRIPCION &&
+                pago.getEventoId() != null) {
+
+            log.info("Pago de inscripción aprobado - Creando inscripción automática");
+
+            try {
+                // Verificar que no esté ya inscripto
+                boolean yaInscripto = eventoService.validarInscripcionEvento(pago.getUsuarioId(), pago.getEventoId());
+
+                if (!yaInscripto) {
+                    eventoService.inscribirseEvento(pago.getUsuarioId(), pago.getEventoId());
+                    log.info("Inscripción automática creada para usuario {} en evento {}",
+                            pago.getUsuarioId(), pago.getEventoId());
+                } else {
+                    log.info("El usuario ya está inscripto - No se crea inscripción duplicada");
+                }
+            } catch (Exception e) {
+                log.error("Error al crear inscripción automática tras pago aprobado", e);
+                // No lanzamos la excepción para no afectar la actualización del pago
+            }
+        }
 
         pagoRepository.save(pago);
         log.info("Pago {} actualizado a estado: {}", pago.getId(), pago.getEstadoPago());

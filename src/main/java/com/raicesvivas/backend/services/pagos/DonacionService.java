@@ -98,8 +98,8 @@ public class DonacionService {
      * @return Lista de las últimas 10 donaciones
      */
     public List<PagoResponseDto> obtenerUltimasDonaciones() {
-        // Crear Pageable para limitar a 10 resultados ordenados por fecha de creación descendente
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "fechaCreacion"));
+        // Crear Pageable para limitar a 12 resultados ordenados por fecha de creación descendente
+        Pageable pageable = PageRequest.of(0, 12, Sort.by(Sort.Direction.DESC, "fechaCreacion"));
 
         // Buscar donaciones aprobadas con mensaje no nulo y no vacío
         List<Pago> donaciones = pagoRepository.findByTipoPagoAndEstadoPagoAndMensajeIsNotNullOrderByFechaCreacionDesc(
@@ -111,7 +111,7 @@ public class DonacionService {
         // Filtrar mensajes vacíos si el repositorio no lo hace
         donaciones = donaciones.stream()
                 .filter(pago -> pago.getMensaje() != null && !pago.getMensaje().trim().isEmpty())
-                .limit(10)
+                .limit(12)
                 .collect(Collectors.toList());
 
         log.info("Obteniendo últimas {} donaciones con mensaje", donaciones.size());
@@ -137,6 +137,7 @@ public class DonacionService {
         dto.setMercadoPagoPreferenceId(pago.getMercadoPagoPreferenceId());
         dto.setMercadoPagoPaymentId(pago.getMercadoPagoPaymentId());
         dto.setMercadoPagoStatus(pago.getMercadoPagoStatus());
+        dto.setMensaje(pago.getMensaje());
 
         // Cargar nombre del usuario
         usuarioRepository.findById(pago.getUsuarioId())

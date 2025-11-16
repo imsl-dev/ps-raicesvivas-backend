@@ -28,4 +28,5 @@ public class PagoResponseDto {
     // Información adicional para el frontend
     private String nombreEvento;
     private String nombreUsuario;
+    private String mensaje;
 }
