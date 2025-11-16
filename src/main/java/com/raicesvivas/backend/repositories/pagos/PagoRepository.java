@@ -38,4 +38,10 @@ public interface PagoRepository extends JpaRepository<Pago, Integer> {
             EstadoPago estadoPago,
             Pageable pageable
     );
+
+    List<Pago> findByTipoPagoAndEstadoPagoAndMensajeIsNotNullOrderByFechaCreacionDesc(
+            TipoPago tipoPago,
+            EstadoPago estadoPago,
+            Pageable pageable
+    );
 }

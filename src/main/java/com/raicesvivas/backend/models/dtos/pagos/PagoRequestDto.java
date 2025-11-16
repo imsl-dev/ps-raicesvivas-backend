@@ -17,7 +17,8 @@ public class PagoRequestDto {
     @NotNull(message = "El ID del usuario es obligatorio")
     private Integer usuarioId;
 
-    private Integer eventoId; // Nullable para donaciones
+    @NotNull(message = "El ID del evento es obligatorio")
+    private Integer eventoId;
 
     @NotNull(message = "El tipo de pago es obligatorio")
     private TipoPago tipoPago;

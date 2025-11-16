@@ -6,10 +6,12 @@ import com.raicesvivas.backend.models.dtos.pagos.DonacionRequestDto;
 import com.raicesvivas.backend.models.dtos.pagos.MercadoPagoResponseDto;
 import com.raicesvivas.backend.models.dtos.pagos.PagoRequestDto;
 import com.raicesvivas.backend.models.dtos.pagos.PagoResponseDto;
+import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.entities.Pago;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.enums.pagos.EstadoPago;
 import com.raicesvivas.backend.models.enums.pagos.TipoPago;
+import com.raicesvivas.backend.repositories.EventoRepository;
 import com.raicesvivas.backend.repositories.UsuarioRepository;
 import com.raicesvivas.backend.repositories.pagos.PagoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 public class DonacionService {
 
     private final PagoRepository pagoRepository;
+    private final EventoRepository eventoRepository;
     private final UsuarioRepository usuarioRepository;
     private final MercadoPagoService mercadoPagoService;
 
@@ -47,6 +50,10 @@ public class DonacionService {
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
+        //Validar evento
+        Evento evento = eventoRepository.findById(request.getEventoId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
         // Validar monto mínimo
         if (request.getMonto().compareTo(BigDecimal.valueOf(100)) < 0) {
             throw new IllegalArgumentException("El monto mínimo de donación es $100");
@@ -54,12 +61,14 @@ public class DonacionService {
 
         // Crear registro de pago como donación
         Pago pago = new Pago();
+
         pago.setUsuarioId(request.getUsuarioId());
-        pago.setEventoId(null); // Las donaciones no tienen evento asociado
+        pago.setEventoId(request.getEventoId());
         pago.setTipoPago(TipoPago.DONACION);
         pago.setEstadoPago(EstadoPago.PENDIENTE);
         pago.setMonto(request.getMonto());
         pago.setFechaCreacion(LocalDateTime.now());
+        pago.setMensaje(request.getMensaje());
 
         Pago pagoGuardado = pagoRepository.save(pago);
         log.info("Donación creada con ID: {}", pagoGuardado.getId());
@@ -67,7 +76,7 @@ public class DonacionService {
         // Convertir a PagoRequestDto para reutilizar la lógica de MercadoPago
         PagoRequestDto pagoRequest = new PagoRequestDto();
         pagoRequest.setUsuarioId(request.getUsuarioId());
-        pagoRequest.setEventoId(null);
+        pagoRequest.setEventoId(request.getEventoId());
         pagoRequest.setTipoPago(TipoPago.DONACION);
         pagoRequest.setMonto(request.getMonto());
         pagoRequest.setDescripcion("Donación a Raíces Vivas - " + usuario.getNombre() + " " + usuario.getApellido());
@@ -92,14 +101,20 @@ public class DonacionService {
         // Crear Pageable para limitar a 10 resultados ordenados por fecha de creación descendente
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "fechaCreacion"));
 
-        // Buscar donaciones aprobadas
-        List<Pago> donaciones = pagoRepository.findByTipoPagoAndEstadoPagoOrderByFechaCreacionDesc(
+        // Buscar donaciones aprobadas con mensaje no nulo y no vacío
+        List<Pago> donaciones = pagoRepository.findByTipoPagoAndEstadoPagoAndMensajeIsNotNullOrderByFechaCreacionDesc(
                 TipoPago.DONACION,
                 EstadoPago.APROBADO,
                 pageable
         );
 
-        log.info("Obteniendo últimas {} donaciones", donaciones.size());
+        // Filtrar mensajes vacíos si el repositorio no lo hace
+        donaciones = donaciones.stream()
+                .filter(pago -> pago.getMensaje() != null && !pago.getMensaje().trim().isEmpty())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        log.info("Obteniendo últimas {} donaciones con mensaje", donaciones.size());
 
         return donaciones.stream()
                 .map(this::convertirADto)
