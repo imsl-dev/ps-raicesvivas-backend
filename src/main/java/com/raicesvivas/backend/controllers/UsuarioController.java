@@ -1,6 +1,7 @@
 package com.raicesvivas.backend.controllers;
 
 import com.raicesvivas.backend.models.dtos.ActualizarUsuarioDTO;
+import com.raicesvivas.backend.models.dtos.CambiarRolUsuarioDTO;
 import com.raicesvivas.backend.models.dtos.NuevoUsuarioDTO;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
@@ -44,5 +45,10 @@ public class UsuarioController {
     @PatchMapping()
     public ResponseEntity<Usuario> actualizarUsuario(@RequestBody ActualizarUsuarioDTO dto) {
         return ResponseEntity.ok(usuarioService.actualizarUsuario(dto));
+    }
+
+    @PatchMapping("/rol/cambiar")
+    public ResponseEntity<Boolean> cambiarRol(@RequestBody CambiarRolUsuarioDTO dto) {
+        return  ResponseEntity.ok(usuarioService.cambiarRol(dto.getIdUsuario(),dto.getNuevoRol()));
     }
 }
