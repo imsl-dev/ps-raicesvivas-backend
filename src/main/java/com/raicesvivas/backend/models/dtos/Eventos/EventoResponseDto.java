@@ -37,6 +37,8 @@ public class EventoResponseDto {
     private String descripcion;
     private String rutaImg;
     private String direccion;
+    private Double latitud;
+    private Double longitud;
     private LocalDateTime horaInicio;
     private LocalDateTime horaFin;
     private Integer puntosAsistencia;

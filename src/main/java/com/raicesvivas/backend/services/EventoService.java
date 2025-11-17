@@ -141,6 +141,8 @@ public class EventoService {
         evento.setDescripcion(dto.getDescripcion());
         evento.setRutaImg(dto.getRutaImg());
         evento.setDireccion(dto.getDireccion());
+        evento.setLatitud(dto.getLatitud());
+        evento.setLongitud(dto.getLongitud());
         evento.setHoraInicio(dto.getHoraInicio());
         evento.setHoraFin(dto.getHoraFin());
         evento.setPuntosAsistencia(dto.getPuntosAsistencia());
@@ -189,6 +191,8 @@ public class EventoService {
         dto.setDescripcion(evento.getDescripcion());
         dto.setRutaImg(evento.getRutaImg());
         dto.setDireccion(evento.getDireccion());
+        dto.setLatitud(evento.getLatitud());
+        dto.setLongitud(evento.getLongitud());
         dto.setHoraInicio(evento.getHoraInicio());
         dto.setHoraFin(evento.getHoraFin());
         dto.setPuntosAsistencia(evento.getPuntosAsistencia());
