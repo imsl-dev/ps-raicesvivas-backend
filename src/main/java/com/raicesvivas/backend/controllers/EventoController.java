@@ -2,8 +2,11 @@ package com.raicesvivas.backend.controllers;
 
 import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
+import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasRequestDto;
+import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasResponseDto;
 import com.raicesvivas.backend.models.entities.Inscripcion;
 import com.raicesvivas.backend.models.enums.EstadoInscripcion;
+import com.raicesvivas.backend.models.enums.MensajeOperacion;
 import com.raicesvivas.backend.services.EventoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -103,8 +106,30 @@ public class EventoController {
             @RequestParam Integer eventoId,
             @RequestParam EstadoInscripcion estado) {
         try {
-            Inscripcion inscripcion = eventoService.modificarAsistenciaEvento(usuarioId, eventoId, estado);
+            Inscripcion inscripcion = eventoService.modificarInscripcionEvento(usuarioId, eventoId, estado);
             return ResponseEntity.status(HttpStatus.CREATED).body(inscripcion);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @GetMapping("/asistencias")
+    public ResponseEntity<PlanillaAsistenciasResponseDto> guardarAsistenciasEvento(
+            @RequestParam int eventoId) {
+        try {
+            PlanillaAsistenciasResponseDto response = eventoService.getAsistenciasPorIdEvento(eventoId);
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @PutMapping("/asistencias")
+    public ResponseEntity<MensajeOperacion> guardarAsistenciasEvento(
+            @RequestParam PlanillaAsistenciasRequestDto asistencias) {
+        try {
+            MensajeOperacion response = eventoService.gestionarAsistencias(asistencias);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }

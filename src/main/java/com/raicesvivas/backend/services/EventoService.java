@@ -2,14 +2,15 @@ package com.raicesvivas.backend.services;
 
 import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
+import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasRequestDto;
+import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasResponseDto;
 import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.entities.Inscripcion;
 import com.raicesvivas.backend.models.entities.Sponsor;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.entities.auxiliar.CuentaBancaria;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
-import com.raicesvivas.backend.models.enums.EstadoEvento;
-import com.raicesvivas.backend.models.enums.EstadoInscripcion;
+import com.raicesvivas.backend.models.enums.*;
 import com.raicesvivas.backend.repositories.EventoRepository;
 import com.raicesvivas.backend.repositories.InscripcionRepository;
 import com.raicesvivas.backend.repositories.SponsorRepository;
@@ -103,23 +104,94 @@ public class EventoService {
         }
     }
 
-    public Inscripcion modificarAsistenciaEvento(Integer usuarioId, Integer eventoId, EstadoInscripcion estado) {
+    public Inscripcion modificarInscripcionEvento(Integer usuarioId, Integer eventoId, EstadoInscripcion estado) {
         Optional<Inscripcion> inscripcionOpc = inscripcionRepository.findByUsuarioIdAndEventoId(usuarioId, eventoId);
-        // Validamos que el evento exista
-        if (inscripcionOpc.isPresent()) {
+        // Validamos que el evento exista y esté pendiente o cancelado
+        if (inscripcionOpc.isPresent() && (EstadoInscripcion.PENDIENTE.equals(estado) || EstadoInscripcion.CANCELADO.equals(estado))) {
             // Gestiona inscripión y cancelación
-            if (EstadoInscripcion.PENDIENTE.equals(estado) || EstadoInscripcion.CANCELADO.equals(estado)) {
-                Inscripcion inscripcion = inscripcionOpc.get();
-                inscripcion.setEstado(estado);
-                return inscripcionRepository.save(inscripcion);
-            }
-            // Gestiona las asistencias y asignación de puntos
-            else {
-                return gestionarAsistencia(inscripcionOpc.get(), estado);
-            }
+            Inscripcion inscripcion = inscripcionOpc.get();
+            inscripcion.setEstado(estado);
+            return inscripcionRepository.save(inscripcion);
         }
         else {
             throw new IllegalStateException("No te encuentras inscripto a este evento");}
+    }
+
+    // Se utiliza desde el front para cargar la planilla de asistencias de un evento
+    public PlanillaAsistenciasResponseDto getAsistenciasPorIdEvento(Integer eventoId) {
+        List<Inscripcion> inscripciones = inscripcionRepository.findByEventoId(eventoId);
+        PlanillaAsistenciasResponseDto asistenciasResponse = new PlanillaAsistenciasResponseDto();
+        for (Inscripcion inscripcion : inscripciones) {
+            Usuario usuario = usuarioRepository.findById(inscripcion.getUsuarioId()).orElse(null);
+            if (usuario != null) {
+                String nombreUsuario = usuario.getNombre() + " " + usuario.getApellido();
+                boolean asistencia = inscripcion.getEstado().equals(EstadoInscripcion.PENDIENTE);
+                asistenciasResponse.getUsuariosAsistencias().add(
+                        new UsuarioNombreAsistencia(usuario.getId(), nombreUsuario, asistencia)
+                );
+            }
+        }
+        return asistenciasResponse;
+    }
+
+
+    // Se utiliza desde el front para actualizar la planilla de asistencia de un evento
+    @Transactional
+    public MensajeOperacion gestionarAsistencias(PlanillaAsistenciasRequestDto planillaAsistencias) {
+        boolean estadoOperacion = true;
+        String mensaje = "Asistencias actualizadas exitosamente!";
+        Optional<Evento> eventoOpc = eventoRepository.findById(planillaAsistencias.getEventoId());
+
+        if (eventoOpc.isPresent()) {
+            Evento evento = eventoOpc.get();
+
+            for (UsuarioAsistencia asistencia : planillaAsistencias.getUsuariosAsistencias()){
+                Optional<Usuario> usuarioOpc = usuarioRepository.findById(asistencia.usuarioId());
+                Optional<Inscripcion> inscripcionOpc = inscripcionRepository.findByUsuarioIdAndEventoId(asistencia.usuarioId(), evento.getId());
+
+                if (usuarioOpc.isPresent() && inscripcionOpc.isPresent()) {
+                    Usuario usuario = usuarioOpc.get();
+                    Inscripcion inscripcion = inscripcionOpc.get();
+                    Integer puntosEvento = evento.getPuntosAsistencia() != null ? evento.getPuntosAsistencia() : 0;
+
+                    // GESTIÓN DE PRESENTES
+                    /* Si: [el usuario tiene presente] y [en su inscripción no figura como presente (para no sumar pts dos veces)]
+                        y el estado se encuentra EN_CURSO o FINALIZADO -> Esta última validacion está por las dudas */
+                    if (asistencia.asistio() && (inscripcion.getEstado() != EstadoInscripcion.PRESENTE) &&
+                            ( (evento.getEstado().equals(EstadoEvento.EN_CURSO) || (evento.getEstado().equals(EstadoEvento.FINALIZADO)) ))) {
+                        usuario.setPuntos(usuario.getPuntos() + puntosEvento);
+                        inscripcion.setEstado(EstadoInscripcion.PRESENTE);
+                        usuarioRepository.save(usuario);
+                    }
+
+                    // GESTIÓN DE AUSENTES
+                    else {
+                        // Gestión de puntos
+                        // Se asignó presente de forma errónea y ahora se deben restar los puntos
+                        if (EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado())) {
+                            int nuevosPuntos = usuario.getPuntos() - puntosEvento;
+                            usuario.setPuntos(Math.max(nuevosPuntos, 0));
+                            usuarioRepository.save(usuario);
+                        }
+
+                        // Gestión de asistencia
+                        if (evento.getEstado().equals(EstadoEvento.EN_CURSO)){
+                            inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+                        }
+                        else if (evento.getEstado().equals(EstadoEvento.FINALIZADO)) {
+                            inscripcion.setEstado(EstadoInscripcion.AUSENTE);
+                        }
+                    }
+                    inscripcionRepository.save(inscripcion);
+                }
+                else {
+                    throw new IllegalStateException("El usuario con id: " + asistencia.usuarioId() + " no fue encontrado o no se encuentra inscripto al evento: " + evento.getId());
+                }
+            }
+        }
+        else {
+            throw new IllegalStateException("No se encuentra el evento. Evento ID: " + planillaAsistencias.getEventoId());}
+        return  new MensajeOperacion(estadoOperacion, mensaje);
     }
 
     // ====================================
@@ -223,46 +295,5 @@ public class EventoService {
         }
 
         return dto;
-    }
-
-    // Gestiona las asistencias y asignación de puntos
-    @Transactional
-    protected Inscripcion gestionarAsistencia(Inscripcion inscripcion, EstadoInscripcion asistencia){
-        Optional<Evento> eventoOpc = eventoRepository.findById(inscripcion.getEventoId());
-        Optional<Usuario> usuarioOpc = usuarioRepository.findById(inscripcion.getUsuarioId());
-        if (eventoOpc.isPresent() && usuarioOpc.isPresent()) {
-            Evento evento = eventoOpc.get();
-            Usuario usuario = usuarioOpc.get();
-            Integer puntosEvento = evento.getPuntosAsistencia() != null ? evento.getPuntosAsistencia() : 0;
-
-            // ASIGNACIÓN DE PUNTOS POR ASISTENCIA
-            if (EstadoInscripcion.PRESENTE.equals(asistencia)) {
-                usuario.setPuntos(usuario.getPuntos() + puntosEvento);
-                inscripcion.setEstado(asistencia);
-                usuarioRepository.save(usuario);
-                return inscripcionRepository.save(inscripcion);
-            }
-
-            // GESTIÓN DE AUSENTES
-            else if (EstadoInscripcion.AUSENTE.equals(asistencia)) {
-                // Flujo 1 - El usuario nunca asistió, por lo que no se asignaron puntos incorrectamente
-                if (EstadoInscripcion.PENDIENTE.equals(inscripcion.getEstado())) {
-                    inscripcion.setEstado(asistencia);
-                    return inscripcionRepository.save(inscripcion);
-                }
-
-                // Flujo 2 - Se asignó presente de forma errónea y ahora se deben restar los puntos
-                else if (EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado())) {
-                    usuario.setPuntos(usuario.getPuntos() - puntosEvento);
-                    inscripcion.setEstado(asistencia);
-                    usuarioRepository.save(usuario);
-                    return inscripcionRepository.save(inscripcion);
-                }
-                else throw new IllegalStateException("El estado: " + inscripcion.getEstado() + " no puede ser modificado a: "+asistencia);
-            }
-            else throw new IllegalStateException("El estado: " + inscripcion.getEstado() + " no puede ser modificado a: "+asistencia);
-        }
-        else {
-            throw new IllegalStateException("No se encuentra el evento o usuario. Evento ID: " + inscripcion.getEventoId() + " Usuario ID: " + inscripcion.getUsuarioId());}
     }
 }
