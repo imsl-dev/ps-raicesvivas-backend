@@ -114,7 +114,7 @@ public class EventoController {
     }
 
     @GetMapping("/asistencias")
-    public ResponseEntity<PlanillaAsistenciasResponseDto> guardarAsistenciasEvento(
+    public ResponseEntity<PlanillaAsistenciasResponseDto> obtenerAsistenciasEvento(
             @RequestParam int eventoId) {
         try {
             PlanillaAsistenciasResponseDto response = eventoService.getAsistenciasPorIdEvento(eventoId);
@@ -135,3 +135,4 @@ public class EventoController {
         }
     }
 }
+
