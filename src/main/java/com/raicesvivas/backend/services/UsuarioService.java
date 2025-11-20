@@ -1,5 +1,6 @@
 package com.raicesvivas.backend.services;
 
+import com.raicesvivas.backend.models.dtos.ActualizarUsuarioDTO;
 import com.raicesvivas.backend.models.dtos.NuevoUsuarioDTO;
 import com.raicesvivas.backend.models.entities.Usuario;
 import com.raicesvivas.backend.models.entities.auxiliar.Provincia;
@@ -47,4 +48,32 @@ public class UsuarioService {
             new EntityNotFoundException("Usuario con ID "+id+" no encontrado")
         );
     }
-}
+
+    public Usuario actualizarUsuario(ActualizarUsuarioDTO dto) {
+
+        Usuario usuarioExistente = getUsuarioById(dto.getId());
+
+        Integer idProvincia = dto.getIdProvincia();
+        Provincia provincia = provinciaRepository.findById(idProvincia).orElseThrow(()
+                -> new EntityNotFoundException("Provincia con ID: "+idProvincia + " no encontrada"));
+
+        usuarioExistente.setProvincia(provincia);
+
+        usuarioExistente.setEmail(dto.getEmail());
+        usuarioExistente.setNombre(dto.getNombre());
+        usuarioExistente.setApellido(dto.getApellido());
+
+
+        return usuarioRepository.save(usuarioExistente);
+    }
+
+    public boolean cambiarRol(Integer userId, RolUsuario rol) {
+        Usuario userToModify = usuarioRepository.findById(userId).orElseThrow(()
+                -> new EntityNotFoundException("Usuario no encontrado"));
+
+        userToModify.setRol(rol);
+        usuarioRepository.save(userToModify);
+        return true;
+    }
+    }
+

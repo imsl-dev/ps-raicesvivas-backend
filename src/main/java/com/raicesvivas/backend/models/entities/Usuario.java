@@ -9,12 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class  Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,4 +55,13 @@ public class Usuario {
 
     @Column(name = "ruta_img", columnDefinition = "TEXT")
     private String rutaImg;
+
+    // 🔥 Many-to-Many with Canjeable
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_canjeables",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "canjeable_id")
+    )
+    private List<Canjeable> canjeables = new ArrayList<>();
 }

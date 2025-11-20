@@ -26,6 +26,9 @@ public class EventoResponseDto {
 
     // Nombres para mostrar (opcional pero útil)
     private String organizadorNombre;
+    private String organizadorApellido;
+    private String organizadorEmail;
+    private String organizadorRutaImg;
     private String provinciaNombre;
     private String sponsorNombre;
 
@@ -34,6 +37,8 @@ public class EventoResponseDto {
     private String descripcion;
     private String rutaImg;
     private String direccion;
+    private Double latitud;
+    private Double longitud;
     private LocalDateTime horaInicio;
     private LocalDateTime horaFin;
     private Integer puntosAsistencia;

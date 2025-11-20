@@ -43,6 +43,8 @@ public class EventoRequestDto {
     private String rutaImg;
 
     private String direccion;
+    private Double latitud;
+    private Double longitud;
 
     @NotNull(message = "La hora de inicio es obligatoria")
     private LocalDateTime horaInicio;

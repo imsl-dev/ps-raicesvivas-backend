@@ -43,6 +43,10 @@ public class Pago {
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
+    // SOLO UTILIZADO EN DONACIONES
+    @Column(name = "mensaje", columnDefinition = "TEXT")
+    private String mensaje;
+
     // Datos de MercadoPago
     @Column(name = "mercadopago_preference_id")
     private String mercadoPagoPreferenceId;  // ID de la preferencia creada

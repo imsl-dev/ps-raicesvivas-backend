@@ -22,6 +22,7 @@ public class SponsorService {
         return sponsorRepository.findById(id).get();
     }
     public Sponsor saveSponsor(SponsorDto sponsorDto) {
+        sponsorDto.setActivo(true);
         return sponsorRepository.save(modelMapper.map(sponsorDto, Sponsor.class));
     }
     public Sponsor updateSponsor(SponsorDto sponsorDto){

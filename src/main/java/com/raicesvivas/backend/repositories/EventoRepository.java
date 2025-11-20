@@ -1,6 +1,7 @@
 package com.raicesvivas.backend.repositories;
 
 import com.raicesvivas.backend.models.entities.Evento;
+import com.raicesvivas.backend.models.entities.Inscripcion;
 import com.raicesvivas.backend.models.enums.EstadoEvento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

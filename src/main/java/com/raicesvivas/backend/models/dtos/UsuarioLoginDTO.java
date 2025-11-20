@@ -1,5 +1,6 @@
 package com.raicesvivas.backend.models.dtos;
 
+import com.raicesvivas.backend.models.enums.EstadoPeticion;
 import lombok.Data;
 
 @Data
@@ -22,5 +23,9 @@ public class UsuarioLoginDTO {
     private String provincia;
 
     private Integer puntos;
+
+    private EstadoPeticion estadoPeticionOrganizador;
+
+    private String rutaImg;
 
 }

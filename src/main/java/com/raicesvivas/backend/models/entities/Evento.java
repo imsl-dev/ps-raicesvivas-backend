@@ -56,6 +56,12 @@ public class Evento {
     @Column(name = "direccion", length = 500)
     private String direccion;
 
+    @Column(name = "latitud")
+    private Double latitud;
+
+    @Column(name = "longitud")
+    private Double longitud;
+
     @Column(name = "hora_inicio", nullable = false)
     private LocalDateTime horaInicio;
 

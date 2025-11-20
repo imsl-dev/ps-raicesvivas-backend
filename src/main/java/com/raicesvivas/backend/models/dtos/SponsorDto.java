@@ -18,4 +18,5 @@ public class SponsorDto {
     private String rutaImg1;
 
     private String rutaImg2;
+    private Boolean activo;
 }
