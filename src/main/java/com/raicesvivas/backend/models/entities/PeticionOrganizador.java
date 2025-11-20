@@ -39,4 +39,7 @@ public class PeticionOrganizador {
 
     @Column(name = "email", columnDefinition = "TEXT")
     private String email;
+
+    @Column(name="userImage", columnDefinition = "TEXT")
+    private String userImage;
 }

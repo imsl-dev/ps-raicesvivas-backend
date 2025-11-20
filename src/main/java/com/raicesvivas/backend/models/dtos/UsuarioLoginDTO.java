@@ -26,4 +26,6 @@ public class UsuarioLoginDTO {
 
     private EstadoPeticion estadoPeticionOrganizador;
 
+    private String rutaImg;
+
 }

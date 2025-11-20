@@ -67,11 +67,12 @@ public class UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 
-    public boolean actualizarRol(Integer userId, RolUsuario rol) {
+    public boolean cambiarRol(Integer userId, RolUsuario rol) {
         Usuario userToModify = usuarioRepository.findById(userId).orElseThrow(()
                 -> new EntityNotFoundException("Usuario no encontrado"));
 
         userToModify.setRol(rol);
+        usuarioRepository.save(userToModify);
         return true;
     }
     }

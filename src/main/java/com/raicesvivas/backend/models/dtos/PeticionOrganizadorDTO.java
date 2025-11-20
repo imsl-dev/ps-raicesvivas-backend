@@ -11,4 +11,6 @@ public class PeticionOrganizadorDTO {
 
     private String image64;
 
+    private String userImage;
+
 }
