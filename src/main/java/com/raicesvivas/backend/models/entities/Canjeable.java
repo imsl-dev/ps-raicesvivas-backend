@@ -1,5 +1,7 @@
 package com.raicesvivas.backend.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,8 +34,12 @@ public class Canjeable {
     @Column(name = "costo_puntos", nullable = false)
     private Integer costoPuntos;
 
+    @Column(name = "nombreSponsor",nullable = false)
+    private String nombreSponsor;
+
     // 🔥 Reverse side of the Many-to-Many
     @ManyToMany(mappedBy = "canjeables")
+    @JsonIgnore
     private List<Usuario> usuarios = new ArrayList<>();
 
     @Column(name="valido_hasta", nullable = false)
