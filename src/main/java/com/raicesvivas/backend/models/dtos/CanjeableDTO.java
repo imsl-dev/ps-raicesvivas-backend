@@ -1,21 +1,17 @@
 package com.raicesvivas.backend.models.dtos;
 
+import com.raicesvivas.backend.models.entities.Sponsor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class NuevoCanjeableDTO {
-
+public class CanjeableDTO {
+    private Integer id;
     private String nombre;
-
-    private Integer costoPuntos;
-
     private Integer sponsorId;
-
     private String url;
-
+    private Integer costoPuntos;
     private LocalDateTime validoHasta;
-
-    private String nombreSponsor;
+    private Sponsor sponsor;
 }
