@@ -38,6 +38,8 @@ public class UsuarioService {
                 -> new EntityNotFoundException("Provincia con ID: "+idProvincia + " no encontrada"));
 
         nuevoUsuario.setProvincia(provincia);
+        //TODO QUITAR PUNTOS HARDCODEADOS
+        nuevoUsuario.setPuntos(1000);
 
         return usuarioRepository.save(nuevoUsuario);
     }

@@ -1,7 +1,10 @@
 package com.raicesvivas.backend.models.dtos;
 
+import com.raicesvivas.backend.models.entities.Canjeable;
 import com.raicesvivas.backend.models.enums.EstadoPeticion;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class UsuarioLoginDTO {
@@ -27,5 +30,7 @@ public class UsuarioLoginDTO {
     private EstadoPeticion estadoPeticionOrganizador;
 
     private String rutaImg;
+
+    private List<CanjeableDTO> canjeables;
 
 }
