@@ -4,6 +4,7 @@ import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
 import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasRequestDto;
 import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasResponseDto;
+import com.raicesvivas.backend.models.dtos.mailDtos.EmailRequestDto;
 import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.entities.Inscripcion;
 import com.raicesvivas.backend.models.entities.Sponsor;
@@ -36,6 +37,7 @@ public class EventoService {
     private final UsuarioRepository usuarioRepository;
     private final SponsorRepository sponsorRepository;
     private final CuentaBancariaRepository cuentaBancariaRepository;
+    private final EmailService emailService;
 
     // ====================================
     // MÉTODOS PÚBLICOS
@@ -121,11 +123,13 @@ public class EventoService {
     public PlanillaAsistenciasResponseDto getAsistenciasPorIdEvento(Integer eventoId) {
         List<Inscripcion> inscripciones = inscripcionRepository.findByEventoId(eventoId);
         PlanillaAsistenciasResponseDto asistenciasResponse = new PlanillaAsistenciasResponseDto();
+        asistenciasResponse.setEventoId(eventoId); // AGREGAR ESTA LÍNEA
+
         for (Inscripcion inscripcion : inscripciones) {
             Usuario usuario = usuarioRepository.findById(inscripcion.getUsuarioId()).orElse(null);
             if (usuario != null) {
                 String nombreUsuario = usuario.getNombre() + " " + usuario.getApellido();
-                boolean asistencia = inscripcion.getEstado().equals(EstadoInscripcion.PENDIENTE);
+                boolean asistencia = EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado());
                 asistenciasResponse.getUsuariosAsistencias().add(
                         new UsuarioNombreAsistencia(usuario.getId(), nombreUsuario, asistencia)
                 );
@@ -270,6 +274,12 @@ public class EventoService {
         dto.setPuntosAsistencia(evento.getPuntosAsistencia());
         dto.setCostoInterno(evento.getCostoInterno());
         dto.setCostoInscripcion(evento.getCostoInscripcion());
+
+        // Contar inscritos (no cancelados)
+        long cantidadInscritos = inscripcionRepository.findByEventoId(evento.getId()).stream()
+                .filter(i -> !EstadoInscripcion.CANCELADO.equals(i.getEstado()))
+                .count();
+        dto.setCantidadInscritos((int) cantidadInscritos);
 
         // Extraer IDs y nombres de las relaciones
         if (evento.getProvincia() != null) {

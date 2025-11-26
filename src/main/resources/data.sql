@@ -31,16 +31,31 @@ SELECT * FROM (VALUES
               ) AS v(nombre)
 WHERE NOT EXISTS (SELECT 1 FROM provincias WHERE provincias.nombre = v.nombre);
 
+-- Insertar usuarios (5 usuarios originales + 10 nuevos usuarios)
 INSERT INTO usuarios (id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, provincia_id, puntos)
 SELECT * FROM (VALUES
+                   -- Usuarios originales
                    (1, 'admin@raicesvivas.com', 'admin', 'Carlos', 'Administrador', 'DNI', '12345678', 'ADMIN', 5, 0),
                    (2, 'organizador@raicesvivas.com', 'admin', 'María', 'Organizadora', 'DNI', '23456789', 'ORGANIZADOR', 5, 100),
                    (3, 'organizador2@raicesvivas.com', 'admin', 'Pedro', 'Organizador', 'DNI', '23456789', 'ORGANIZADOR', 3, 0),
                    (4, 'usuario@raicesvivas.com', 'admin', 'Juan', 'Participante', 'DNI', '34567890', 'USUARIO', 5, 50),
-                   (5, 'usuario2@raicesvivas.com', 'admin', 'Ignacio', 'Participante', 'DNI', '34567890', 'USUARIO', 2, 0)
+                   (5, 'usuario2@raicesvivas.com', 'admin', 'Ignacio', 'Participante', 'DNI', '34567890', 'USUARIO', 2, 0),
+
+                   -- 10 Nuevos usuarios
+                   (6, 'laura.martinez@raicesvivas.com', 'admin', 'Laura', 'Martínez', 'DNI', '45678901', 'USUARIO', 5, 0),
+                   (7, 'roberto.gonzalez@raicesvivas.com', 'admin', 'Roberto', 'González', 'DNI', '45678902', 'USUARIO', 5, 0),
+                   (8, 'ana.rodriguez@raicesvivas.com', 'admin', 'Ana', 'Rodríguez', 'DNI', '45678903', 'USUARIO', 5, 0),
+                   (9, 'miguel.fernandez@raicesvivas.com', 'admin', 'Miguel', 'Fernández', 'DNI', '45678904', 'USUARIO', 5, 0),
+                   (10, 'sofia.lopez@raicesvivas.com', 'admin', 'Sofía', 'López', 'DNI', '45678905', 'USUARIO', 5, 0),
+                   (11, 'diego.perez@raicesvivas.com', 'admin', 'Diego', 'Pérez', 'DNI', '45678906', 'USUARIO', 5, 0),
+                   (12, 'valeria.garcia@raicesvivas.com', 'admin', 'Valeria', 'García', 'DNI', '45678907', 'USUARIO', 5, 0),
+                   (13, 'carlos.sanchez@raicesvivas.com', 'admin', 'Carlos', 'Sánchez', 'DNI', '45678908', 'USUARIO', 5, 0),
+                   (14, 'marina.ruiz@raicesvivas.com', 'admin', 'Marina', 'Ruiz', 'DNI', '45678909', 'USUARIO', 5, 0),
+                   (15, 'fernando.diaz@raicesvivas.com', 'admin', 'Fernando', 'Díaz', 'DNI', '45678910', 'USUARIO', 5, 0)
               ) AS v(id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, provincia_id, puntos)
 WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE usuarios.email = v.email);
 
+-- Insertar sponsors
 INSERT INTO sponsors (nombre, link_dominio, ruta_img1, ruta_img2, activo)
 SELECT * FROM (VALUES
                    ('Coca Cola', 'https://www.coca-cola.com/ar/es', 'https://www.cocacolaep.com/assets/legacy-assets/Uploads/resources/Coca-Cola-1210__FocusFillWyIwLjAwIiwiMC4wMCIsMTM3Niw1MzJd.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQe0QogSQXZmAqf45bXvsjKT4SyWlcuvJajA&s', true),
@@ -51,9 +66,10 @@ WHERE NOT EXISTS (
     SELECT 1 FROM sponsors s WHERE s.nombre = v.nombre
 );
 
--- Inserts para eventos
-INSERT INTO eventos (tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
+-- Insertar eventos CON IDs EXPLÍCITOS
+INSERT INTO eventos (id, tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
 SELECT
+    id,
     tipo,
     estado,
     organizador_id,
@@ -70,20 +86,72 @@ SELECT
     costo_inscripcion,
     sponsor_id
 FROM (VALUES
-          ('REFORESTACION', 'PROXIMO', 2, NULL, 11, 'Reforestación Sierras Grandes', 'La reforestación en las sierras de Córdoba se enfoca en la restauración de los bosques nativos, especialmente con el árbol tabaquillo (\(PolylepisAustralis\)), que es vital para la recuperación de suelos, el ciclo hídrico y la biodiversidad.', 'https://www.unc.edu.ar/sites/default/files/RGB.jpg', 'Centro-noroeste de la provincia de Córdoba', '2025-12-17 07:00:00', '2025-12-17 17:30:00', 20, 500, 100, 1),
-          ('RECOLECCION_BASURA', 'PROXIMO', 2, NULL, 11, 'Recolección de basura Villa Urquiza', 'Se hará una recolección de basura volutaria para ayudar a mejorar la condición de los residentes de Villa Urquiza', 'https://cordoba.gob.ar/wp-content/uploads/2021/03/WhatsApp-Image-2021-03-19-at-15.56.13-800x400.jpeg', 'Villa Urquiza, Córdoba Capital', '2025-11-15 10:30:00', '2025-11-15 15:30:00', 10, 300, 0, 2),
-          ('REFORESTACION', 'PROXIMO', 3, NULL, 9, 'Reforestacion de Almirante Brown ORG 2', 'Se busca reforestar 20 km2 en el Departamento Almirante Brown de Chaco. /nLas acciones de reforestación están principalmente enfocadas en contrarrestar la deforestación ilegal y proteger los bosques nativos.', 'https://econoticias.com.ar/wp-content/uploads/2024/09/bol_visita_fao_gran_chaco_americano_onu_bolivia_credito_morelia_erostegui-44_0-scaled.jpg', 'Almirante Brown, Chaco', '2025-11-20 09:00:00', '2025-11-21 16:30:00', 15, 200, 100, 2),
-          ('JUNTA_ALIMENTOS', 'PROXIMO', 3, NULL, 10, 'Dormir con la panza llena ORG 2', 'Unimos fuerzas para llevar alimentos a quienes más lo necesitan. Sumate con tu donación y ayudanos a llenar de esperanza las mesas de muchas familias.', 'https://www.bbva.com/wp-content/uploads/2024/04/BBVA-donacion-alimentos-sostenibilidad.jpg', 'Dr. Pedro Minuzzi 428, M5501 Godoy Cruz, Mendoza', '2025-11-13 07:00:00', '2025-11-13 17:30:00', 10, 0, 0, 1),
-          ('REFORESTACION', 'CANCELADO', 2, NULL, 9, 'Reforestacion de Almirante Brown', 'Se busca reforestar 20 km2 en el Departamento Almirante Brown de Chaco. /nLas acciones de reforestación están principalmente enfocadas en contrarrestar la deforestación ilegal y proteger los bosques nativos.', 'https://econoticias.com.ar/wp-content/uploads/2024/09/bol_visita_fao_gran_chaco_americano_onu_bolivia_credito_morelia_erostegui-44_0-scaled.jpg', 'Almirante Brown, Chaco', '2025-10-11 09:00:00', '2025-10-11 16:30:00', 15, 200, 100, 2),
-          ('JUNTA_ALIMENTOS', 'EN_CURSO', 2, NULL, 10, 'Dormir con la panza llena', 'Unimos fuerzas para llevar alimentos a quienes más lo necesitan. Sumate con tu donación y ayudanos a llenar de esperanza las mesas de muchas familias.', 'https://www.bbva.com/wp-content/uploads/2024/04/BBVA-donacion-alimentos-sostenibilidad.jpg', 'Dr. Pedro Minuzzi 428, M5501 Godoy Cruz, Mendoza', '2025-10-07 07:00:00', '2025-10-31 17:30:00', 10, 0, 0, 1),
-          ('DONACIONES', 'FINALIZADO', 3, NULL, 18, 'Apoyo a los niños de Cochagual', 'Tras el terremoto de 2021, la Escuela Paulo VI quedó en condiciones que obligaron a sus alumnos a estudiar en módulos provisorios. Fue un desafío enorme para las familias, los docentes y toda la comunidad. /n/n🏫 Hoy la realidad es distinta: ya cuentan con un edificio nuevo, seguro y moderno, con aulas cómodas y servicios que garantizan la tranquilidad de enseñar y aprender con las condiciones adecuadas.', 'https://sisanjuan.b-cdn.net/media/k2/items/cache/ae44d2dd91a73b393523b3a0d4ac8bc4_L.jpg', 'CARMONA S/N COCHAGUAL CENTRO', '2025-10-03 07:00:00', '2025-10-03 21:00:00', 15, 100, NULL, 3)
-     ) AS v(tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
+          (1, 'REFORESTACION', 'EN_CURSO', 2, NULL, 11, 'Reforestación Sierras Grandes', 'La reforestación en las sierras de Córdoba se enfoca en la restauración de los bosques nativos, especialmente con el árbol tabaquillo (\(PolylepisAustralis\)), que es vital para la recuperación de suelos, el ciclo hídrico y la biodiversidad.', 'https://www.unc.edu.ar/sites/default/files/RGB.jpg', 'Centro-noroeste de la provincia de Córdoba', '2025-11-20 07:00:00', '2025-12-20 17:30:00', 20, 500, 100, 1),
+          (2, 'RECOLECCION_BASURA', 'PROXIMO', 2, NULL, 11, 'Recolección de basura Villa Urquiza', 'Se hará una recolección de basura volutaria para ayudar a mejorar la condición de los residentes de Villa Urquiza', 'https://cordoba.gob.ar/wp-content/uploads/2021/03/WhatsApp-Image-2021-03-19-at-15.56.13-800x400.jpeg', 'Villa Urquiza, Córdoba Capital', '2025-12-20 10:30:00', '2025-12-20 15:30:00', 10, 300, 0, 2),
+          (3, 'REFORESTACION', 'PROXIMO', 3, NULL, 9, 'Reforestacion de Almirante Brown ORG 2', 'Se busca reforestar 20 km2 en el Departamento Almirante Brown de Chaco. /nLas acciones de reforestación están principalmente enfocadas en contrarrestar la deforestación ilegal y proteger los bosques nativos.', 'https://econoticias.com.ar/wp-content/uploads/2024/09/bol_visita_fao_gran_chaco_americano_onu_bolivia_credito_morelia_erostegui-44_0-scaled.jpg', 'Almirante Brown, Chaco', '2025-12-20 09:00:00', '2025-12-21 16:30:00', 15, 200, 100, 2),
+          (4, 'JUNTA_ALIMENTOS', 'PROXIMO', 3, NULL, 10, 'Dormir con la panza llena ORG 2', 'Unimos fuerzas para llevar alimentos a quienes más lo necesitan. Sumate con tu donación y ayudanos a llenar de esperanza las mesas de muchas familias.', 'https://www.bbva.com/wp-content/uploads/2024/04/BBVA-donacion-alimentos-sostenibilidad.jpg', 'Dr. Pedro Minuzzi 428, M5501 Godoy Cruz, Mendoza', '2025-12-28 07:00:00', '2025-12-31 17:30:00', 10, 0, 0, 1),
+          (5, 'DONACIONES', 'FINALIZADO', 2, NULL, 18, 'Apoyo a los niños de Cochagual', 'Tras el terremoto de 2021, la Escuela Paulo VI quedó en condiciones que obligaron a sus alumnos a estudiar en módulos provisorios. Fue un desafío enorme para las familias, los docentes y toda la comunidad. /n/n🏫 Hoy la realidad es distinta: ya cuentan con un edificio nuevo, seguro y moderno, con aulas cómodas y servicios que garantizan la tranquilidad de enseñar y aprender con las condiciones adecuadas.', 'https://sisanjuan.b-cdn.net/media/k2/items/cache/ae44d2dd91a73b393523b3a0d4ac8bc4_L.jpg', 'CARMONA S/N COCHAGUAL CENTRO', '2025-10-03 07:00:00', '2025-10-03 21:00:00', 15, 100, NULL, 3)
+     ) AS v(id, tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
 WHERE NOT EXISTS (
-    SELECT 1 FROM eventos e WHERE e.nombre = v.nombre
+    SELECT 1 FROM eventos e WHERE e.id = v.id
 );
+
 -- Evitar problemas de insert cuando se corre data.sql
 SELECT setval('usuarios_id_seq', COALESCE((SELECT MAX(id) FROM usuarios), 1));
+SELECT setval('eventos_id_seq', COALESCE((SELECT MAX(id) FROM eventos), 1));
 
+-- Insertar inscripciones
+-- Los 10 nuevos usuarios inscritos al evento "Reforestación Sierras Grandes" (evento_id = 1) con estado PENDIENTE
+-- 8 de esos 10 usuarios también inscritos a "Apoyo a los niños de Cochagual" (evento_id = 5): 4 PRESENTE y 4 AUSENTE
+INSERT INTO inscripciones (usuario_id, evento_id, estado)
+SELECT
+    usuario_id,
+    evento_id,
+    estado
+FROM (VALUES
+          -- Usuario 6: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
+          (6, 1, 'PENDIENTE'),
+          (6, 5, 'PRESENTE'),
+
+          -- Usuario 7: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
+          (7, 1, 'PENDIENTE'),
+          (7, 5, 'PRESENTE'),
+
+          -- Usuario 8: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
+          (8, 1, 'PENDIENTE'),
+          (8, 5, 'PRESENTE'),
+
+          -- Usuario 9: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
+          (9, 1, 'PENDIENTE'),
+          (9, 5, 'PRESENTE'),
+
+          -- Usuario 10: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
+          (10, 1, 'PENDIENTE'),
+          (10, 5, 'AUSENTE'),
+
+          -- Usuario 11: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
+          (11, 1, 'PENDIENTE'),
+          (11, 5, 'AUSENTE'),
+
+          -- Usuario 12: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
+          (12, 1, 'PENDIENTE'),
+          (12, 5, 'AUSENTE'),
+
+          -- Usuario 13: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
+          (13, 1, 'PENDIENTE'),
+          (13, 5, 'AUSENTE'),
+
+          -- Usuario 14: Inscrito solo a Reforestación (PENDIENTE)
+          (14, 1, 'PENDIENTE'),
+
+          -- Usuario 15: Inscrito solo a Reforestación (PENDIENTE)
+          (15, 1, 'PENDIENTE')
+     ) AS v(usuario_id, evento_id, estado)
+WHERE NOT EXISTS (
+    SELECT 1 FROM inscripciones i
+    WHERE i.usuario_id = v.usuario_id
+      AND i.evento_id = v.evento_id
+);
 
 -- SECCION DE DONACIONES
 INSERT INTO pagos (usuario_id, evento_id, tipo_pago, estado_pago, monto, fecha_creacion, fecha_actualizacion, mensaje)
@@ -156,3 +224,6 @@ WHERE NOT EXISTS (
 
 -- Actualizar la secuencia de pagos
 SELECT setval('pagos_id_seq', COALESCE((SELECT MAX(id) FROM pagos), 1));
+
+-- Actualizar la secuencia de inscripciones
+SELECT setval('inscripciones_id_seq', COALESCE((SELECT MAX(id) FROM inscripciones), 1));

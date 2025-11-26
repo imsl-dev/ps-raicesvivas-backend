@@ -44,4 +44,5 @@ public class EventoResponseDto {
     private Integer puntosAsistencia;
     private BigDecimal costoInterno;
     private BigDecimal costoInscripcion;
+    private Integer cantidadInscritos;
 }

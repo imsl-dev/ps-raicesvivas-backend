@@ -126,10 +126,10 @@ public class EventoController {
 
     @PutMapping("/asistencias")
     public ResponseEntity<MensajeOperacion> guardarAsistenciasEvento(
-            @RequestParam PlanillaAsistenciasRequestDto asistencias) {
+            @RequestBody PlanillaAsistenciasRequestDto asistencias) {
         try {
             MensajeOperacion response = eventoService.gestionarAsistencias(asistencias);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
