@@ -156,35 +156,42 @@ public class EventoService {
                 if (usuarioOpc.isPresent() && inscripcionOpc.isPresent()) {
                     Usuario usuario = usuarioOpc.get();
                     Inscripcion inscripcion = inscripcionOpc.get();
-                    Integer puntosEvento = evento.getPuntosAsistencia() != null ? evento.getPuntosAsistencia() : 0;
+                    Integer puntosEvento = evento.getPuntosAsistencia() != null ?
+                            evento.getPuntosAsistencia() : 0;
 
-                    // GESTIÓN DE PRESENTES
-                    /* Si: [el usuario tiene presente] y [en su inscripción no figura como presente (para no sumar pts dos veces)]
-                        y el estado se encuentra EN_CURSO o FINALIZADO -> Esta última validacion está por las dudas */
-                    if (asistencia.asistio() && (inscripcion.getEstado() != EstadoInscripcion.PRESENTE) &&
-                            ( (evento.getEstado().equals(EstadoEvento.EN_CURSO) || (evento.getEstado().equals(EstadoEvento.FINALIZADO)) ))) {
-                        usuario.setPuntos(usuario.getPuntos() + puntosEvento);
-                        inscripcion.setEstado(EstadoInscripcion.PRESENTE);
-                        usuarioRepository.save(usuario);
-                    }
+                    EstadoInscripcion estadoAnterior = inscripcion.getEstado();
+                    boolean eraPresente = EstadoInscripcion.PRESENTE.equals(estadoAnterior);
+                    boolean eventoPermiteAsistencia = evento.getEstado().equals(EstadoEvento.EN_CURSO)
+                            || evento.getEstado().equals(EstadoEvento.FINALIZADO);
 
-                    // GESTIÓN DE AUSENTES
-                    else {
-                        // Gestión de puntos
-                        // Se asignó presente de forma errónea y ahora se deben restar los puntos
-                        if (EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado())) {
-                            int nuevosPuntos = usuario.getPuntos() - puntosEvento;
-                            usuario.setPuntos(Math.max(nuevosPuntos, 0));
-                            usuarioRepository.save(usuario);
+                    if (asistencia.asistio()) {
+                        // El usuario asistió
+                        if (eventoPermiteAsistencia) {
+                            inscripcion.setEstado(EstadoInscripcion.PRESENTE);
+                            // Solo sumar puntos si no era PRESENTE antes
+                            if (!eraPresente) {
+                                usuario.setPuntos(usuario.getPuntos() + puntosEvento);
+                                usuarioRepository.save(usuario);
+                            }
                         }
-
-                        // Gestión de asistencia
-                        if (evento.getEstado().equals(EstadoEvento.EN_CURSO)){
-                            inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+                        // Si el evento no permite asistencia (PROXIMO/CANCELADO), no hacemos nada con el estado
+                    } else {
+                        // El usuario NO asistió
+                        if (eventoPermiteAsistencia) {
+                            // Restar puntos si antes era PRESENTE
+                            if (eraPresente) {
+                                int nuevosPuntos = usuario.getPuntos() - puntosEvento;
+                                usuario.setPuntos(Math.max(nuevosPuntos, 0));
+                                usuarioRepository.save(usuario);
+                            }
+                            // Determinar el nuevo estado según el estado del evento
+                            if (evento.getEstado().equals(EstadoEvento.EN_CURSO)) {
+                                inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+                            } else {
+                                inscripcion.setEstado(EstadoInscripcion.AUSENTE);
+                            }
                         }
-                        else if (evento.getEstado().equals(EstadoEvento.FINALIZADO)) {
-                            inscripcion.setEstado(EstadoInscripcion.AUSENTE);
-                        }
+                        // Si el evento no permite asistencia (PROXIMO/CANCELADO), no hacemos nada con el estado
                     }
                     inscripcionRepository.save(inscripcion);
                 }
