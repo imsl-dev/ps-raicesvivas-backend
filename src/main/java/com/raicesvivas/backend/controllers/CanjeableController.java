@@ -66,4 +66,40 @@ public class CanjeableController {
             @PathVariable Integer canjeableId) {
         return ResponseEntity.ok(canjeableService.canjearCupon(usuarioId, canjeableId));
     }
+
+    /**
+     * ⭐ NUEVO: Obtener TODOS los canjeables (activos e inactivos, vigentes y vencidos)
+     * Para administración
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<CanjeableDTO>> getAllCanjeablesAdmin() {
+        return ResponseEntity.ok(canjeableService.getAllCanjeablesAdmin());
+    }
+
+    /**
+     * ⭐ NUEVO: Obtener un canjeable por ID
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<CanjeableDTO> getCanjeableById(@PathVariable Integer id) {
+        return ResponseEntity.ok(canjeableService.getCanjeableById(id));
+    }
+
+    /**
+     * ⭐ NUEVO: Actualizar un canjeable
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Canjeable> updateCanjeable(
+            @PathVariable Integer id,
+            @RequestBody NuevoCanjeableDTO dto) {
+        return ResponseEntity.ok(canjeableService.updateCanjeable(id, dto));
+    }
+
+    /**
+     * ⭐ NUEVO: Eliminar (soft delete) un canjeable
+     * Marca activo = false
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteCanjeable(@PathVariable Integer id) {
+        return ResponseEntity.ok(canjeableService.deleteCanjeable(id));
+    }
 }

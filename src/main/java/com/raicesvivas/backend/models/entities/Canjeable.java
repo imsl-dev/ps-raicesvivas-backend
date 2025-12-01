@@ -44,4 +44,7 @@ public class Canjeable {
 
     @Column(name="valido_hasta", nullable = false)
     private LocalDateTime validoHasta;
+
+    @Column(name = "activo", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    private Boolean activo = true;
 }
