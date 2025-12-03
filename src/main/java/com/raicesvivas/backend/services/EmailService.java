@@ -18,6 +18,9 @@ public class EmailService {
     private String MAIL_USERNAME;
     private final JavaMailSender mailSender;
 
+    private String emailDestinatoarioTest;
+    private List<String> listaEmailsDestinatariosTest;
+
     private void enviarMail(EmailRequestDto emailRequestDto) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
