@@ -19,7 +19,7 @@ public class EmailController {
     @PostMapping("/sendSimple")
     public ResponseEntity<String> sendEmail(@RequestBody EmailRequestDto request) {
         try {
-            emailService.enviarMail(request);
+//            emailService.enviarMail(request);
             return ResponseEntity.ok("Email enviado exitosamente");
         } catch (Exception e) {
             return ResponseEntity.status(500)
@@ -30,7 +30,7 @@ public class EmailController {
     @PostMapping("/sendMulti")
     public ResponseEntity<String> sendEmail(@RequestBody EmailMultiRequestDto request) {
         try {
-            emailService.enviarMail(request);
+//            emailService.enviarMail(request);
             return ResponseEntity.ok("Email enviado exitosamente");
         } catch (Exception e) {
             return ResponseEntity.status(500)

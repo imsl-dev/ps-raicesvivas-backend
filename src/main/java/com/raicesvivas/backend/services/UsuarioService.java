@@ -19,9 +19,9 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-
     private final ProvinciaRepository provinciaRepository;
     private final ModelMapper mapper;
+    private final EmailService emailService;
 
     public List<Usuario> getAllUsuarios(){
         return usuarioRepository.findAll();
@@ -40,7 +40,7 @@ public class UsuarioService {
         nuevoUsuario.setProvincia(provincia);
         //TODO QUITAR PUNTOS HARDCODEADOS
         nuevoUsuario.setPuntos(1000);
-
+        emailService.EnviarMailBienvienida(nuevoUsuario);
         return usuarioRepository.save(nuevoUsuario);
     }
 
@@ -75,7 +75,12 @@ public class UsuarioService {
 
         userToModify.setRol(rol);
         usuarioRepository.save(userToModify);
+        if (rol == RolUsuario.ORGANIZADOR) {
+            emailService.EnviarMailNuevoOrganizador(userToModify);
+        }
         return true;
     }
+
+
     }
 

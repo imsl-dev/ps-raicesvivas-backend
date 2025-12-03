@@ -4,6 +4,7 @@ import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
 import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasRequestDto;
 import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasResponseDto;
+import com.raicesvivas.backend.models.dtos.mailDtos.EmailMultiRequestDto;
 import com.raicesvivas.backend.models.dtos.mailDtos.EmailRequestDto;
 import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.entities.Inscripcion;
@@ -65,6 +66,10 @@ public class EventoService {
         Evento nuevoEvento = convertirAEntidad(dto);
         nuevoEvento.setId(null); // Asegurar que es nuevo
         Evento eventoGuardado = eventoRepository.save(nuevoEvento);
+
+        Optional<Usuario> organizador = usuarioRepository.findById(dto.getOrganizadorId());
+        organizador.ifPresent(usuario -> emailService.EnviarEmailConfirmacionCreacionEvento(usuario, eventoGuardado));
+
         return convertirAResponse(eventoGuardado);
     }
 
@@ -76,8 +81,19 @@ public class EventoService {
         // Convertir DTO a entidad (con las relaciones cargadas)
         Evento eventoActualizado = convertirAEntidad(dto);
         eventoActualizado.setId(dto.getId()); // Mantener el ID
-
         Evento eventoGuardado = eventoRepository.save(eventoActualizado);
+
+        EmailMultiRequestDto email = new EmailMultiRequestDto();
+        email.setEmailsDestinatarios(obtenerEmailsUsuariosInscriptos(eventoGuardado.getId()));
+        if (eventoGuardado.getEstado() == EstadoEvento.CANCELADO){
+            Optional<Usuario> organizador = usuarioRepository.findById(dto.getOrganizadorId());
+            emailService.EnviarMailConfirmacionCancelacionUsuarios(email, eventoGuardado);
+            emailService.EnviarMailConfirmacionCancelacionOrganizador(organizador.get(), eventoGuardado);
+        }
+        else {
+            emailService.EnviarMailModificacionDeEvento(email, eventoGuardado);
+        }
+
         return convertirAResponse(eventoGuardado);
     }
 
@@ -102,6 +118,13 @@ public class EventoService {
             inscripcion.setEventoId(eventoId);
             inscripcion.setUsuarioId(usuarioId);
             inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+
+            Optional<Evento> eventoOpc = eventoRepository.findById(eventoId);
+            Optional<Usuario> usuarioOpc = usuarioRepository.findById(usuarioId);
+            if (eventoOpc.isPresent() && usuarioOpc.isPresent()) {
+                emailService.EnviarMailConfirmacionInscripcion(usuarioOpc.get(), eventoOpc.get());
+            }
+
             return inscripcionRepository.save(inscripcion);
         }
     }
@@ -203,6 +226,12 @@ public class EventoService {
         else {
             throw new IllegalStateException("No se encuentra el evento. Evento ID: " + planillaAsistencias.getEventoId());}
         return  new MensajeOperacion(estadoOperacion, mensaje);
+    }
+
+    public void NotificarEventoEnCurso (Evento evento){
+        EmailMultiRequestDto email = new EmailMultiRequestDto();
+        email.setEmailsDestinatarios(obtenerEmailsUsuariosInscriptos(evento.getId()));
+        emailService.EnviarMailEventoEnCurso(email, evento);
     }
 
     // ====================================
@@ -312,5 +341,15 @@ public class EventoService {
         }
 
         return dto;
+    }
+
+    private List<String> obtenerEmailsUsuariosInscriptos(Integer eventoId) {
+        List<Inscripcion> inscripciones = inscripcionRepository.findByEventoId(eventoId);
+
+        return inscripciones.stream()
+                .map(inscripcion -> usuarioRepository.findById(inscripcion.getUsuarioId()).orElse(null))
+                .filter(usuario -> usuario != null)
+                .map(Usuario::getEmail)
+                .toList();
     }
 }

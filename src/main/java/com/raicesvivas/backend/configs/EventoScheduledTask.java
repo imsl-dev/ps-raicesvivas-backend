@@ -3,6 +3,7 @@ package com.raicesvivas.backend.configs;
 import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.enums.EstadoEvento;
 import com.raicesvivas.backend.repositories.EventoRepository;
+import com.raicesvivas.backend.services.EventoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +19,7 @@ import java.util.List;
 public class EventoScheduledTask {
 
     private final EventoRepository eventoRepository;
+    private final EventoService eventoService;
 
     /**
      * Tarea programada que se ejecuta cada 5 minutos
@@ -37,6 +39,9 @@ public class EventoScheduledTask {
         for (Evento evento : eventosProximos) {
             // Solo cambiar a EN_CURSO si aún no ha finalizado
             if (evento.getHoraFin().isAfter(ahora)) {
+                if (evento.getEstado().equals(EstadoEvento.PROXIMO)) {
+                    eventoService.NotificarEventoEnCurso(evento);
+                }
                 evento.setEstado(EstadoEvento.EN_CURSO);
                 eventoRepository.save(evento);
                 log.info("Evento '{}' (ID: {}) cambió a EN_CURSO", evento.getNombre(), evento.getId());
