@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -118,6 +119,7 @@ public class EventoService {
             inscripcion.setEventoId(eventoId);
             inscripcion.setUsuarioId(usuarioId);
             inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+            inscripcion.setFechaCreacion(LocalDateTime.now());
 
             Optional<Evento> eventoOpc = eventoRepository.findById(eventoId);
             Optional<Usuario> usuarioOpc = usuarioRepository.findById(usuarioId);

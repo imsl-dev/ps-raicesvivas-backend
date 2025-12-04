@@ -103,50 +103,41 @@ SELECT setval('eventos_id_seq', COALESCE((SELECT MAX(id) FROM eventos), 1));
 -- Insertar inscripciones
 -- Los 10 nuevos usuarios inscritos al evento "Reforestación Sierras Grandes" (evento_id = 1) con estado PENDIENTE
 -- 8 de esos 10 usuarios también inscritos a "Apoyo a los niños de Cochagual" (evento_id = 5): 4 PRESENTE y 4 AUSENTE
-INSERT INTO inscripciones (usuario_id, evento_id, estado)
+INSERT INTO inscripciones (usuario_id, evento_id, estado, fecha_creacion)
 SELECT
     usuario_id,
     evento_id,
-    estado
+    estado,
+    fecha_creacion
 FROM (VALUES
-          -- Usuario 6: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
-          (6, 1, 'PENDIENTE'),
-          (6, 5, 'PRESENTE'),
+          (6, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (6, 5, 'PRESENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 7: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
-          (7, 1, 'PENDIENTE'),
-          (7, 5, 'PRESENTE'),
+          (7, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (7, 5, 'PRESENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 8: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
-          (8, 1, 'PENDIENTE'),
-          (8, 5, 'PRESENTE'),
+          (8, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (8, 5, 'PRESENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 9: Inscrito a Reforestación (PENDIENTE) y Apoyo (PRESENTE)
-          (9, 1, 'PENDIENTE'),
-          (9, 5, 'PRESENTE'),
+          (9, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (9, 5, 'PRESENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 10: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
-          (10, 1, 'PENDIENTE'),
-          (10, 5, 'AUSENTE'),
+          (10, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (10, 5, 'AUSENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 11: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
-          (11, 1, 'PENDIENTE'),
-          (11, 5, 'AUSENTE'),
+          (11, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (11, 5, 'AUSENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 12: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
-          (12, 1, 'PENDIENTE'),
-          (12, 5, 'AUSENTE'),
+          (12, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (12, 5, 'AUSENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 13: Inscrito a Reforestación (PENDIENTE) y Apoyo (AUSENTE)
-          (13, 1, 'PENDIENTE'),
-          (13, 5, 'AUSENTE'),
+          (13, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
+          (13, 5, 'AUSENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 14: Inscrito solo a Reforestación (PENDIENTE)
-          (14, 1, 'PENDIENTE'),
+          (14, 1, 'PENDIENTE', CURRENT_TIMESTAMP),
 
-          -- Usuario 15: Inscrito solo a Reforestación (PENDIENTE)
-          (15, 1, 'PENDIENTE')
-     ) AS v(usuario_id, evento_id, estado)
+          (15, 1, 'PENDIENTE', CURRENT_TIMESTAMP)
+     ) AS v(usuario_id, evento_id, estado, fecha_creacion)
 WHERE NOT EXISTS (
     SELECT 1 FROM inscripciones i
     WHERE i.usuario_id = v.usuario_id
