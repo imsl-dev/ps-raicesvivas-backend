@@ -32,27 +32,27 @@ SELECT * FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM provincias WHERE provincias.nombre = v.nombre);
 
 -- Insertar usuarios (5 usuarios originales + 10 nuevos usuarios)
-INSERT INTO usuarios (id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, provincia_id, puntos)
+INSERT INTO usuarios (id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, ruta_img, provincia_id, puntos)
 SELECT * FROM (VALUES
                    -- Usuarios originales
-                   (1, 'admin@raicesvivas.com', 'admin', 'Carlos', 'Administrador', 'DNI', '12345678', 'ADMIN', 5, 0),
-                   (2, 'organizador@raicesvivas.com', 'admin', 'María', 'Organizadora', 'DNI', '23456789', 'ORGANIZADOR', 5, 100),
-                   (3, 'organizador2@raicesvivas.com', 'admin', 'Pedro', 'Organizador', 'DNI', '23456789', 'ORGANIZADOR', 3, 0),
-                   (4, 'usuario@raicesvivas.com', 'admin', 'Juan', 'Participante', 'DNI', '34567890', 'USUARIO', 5, 50),
-                   (5, 'usuario2@raicesvivas.com', 'admin', 'Ignacio', 'Participante', 'DNI', '34567890', 'USUARIO', 2, 0),
+                   (1, 'admin@raicesvivas.com', 'admin', 'Carlos', 'Administrador', 'DNI', '12345678', 'ADMIN', null, 5, 0),
+                   (2, 'organizador@raicesvivas.com', 'admin', 'Juan Pablo', 'Bauza', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/C4D03AQGVW2fZ-M37fQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1648048631048?e=1766620800&v=beta&t=JvsdiKhQnWSv93zKTLZxnICqI7GhidugbNkrNzsfkAY', 5, 100),
+                   (3, 'organizador2@raicesvivas.com', 'admin', 'Ignacio', 'Solis', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/D4E03AQFRFYt3NH1sBQ/profile-displayphoto-shrink_800_800/B4EZWLlj0mG0Ag-/0/1741803635584?e=1766620800&v=beta&t=_64oV1xVQle_GAxIlQpUP14ePsiXr2eo0asJLfhUo50', 3, 0),
+                   (4, 'usuario@raicesvivas.com', 'admin', 'Juan', 'Participante', 'DNI', '34567890', 'USUARIO', null, 5, 50),
+                   (5, 'usuario2@raicesvivas.com', 'admin', 'Ignacio', 'Participante', 'DNI', '34567890', 'USUARIO', null, 2, 0),
 
                    -- 10 Nuevos usuarios
-                   (6, 'laura.martinez@raicesvivas.com', 'admin', 'Laura', 'Martínez', 'DNI', '45678901', 'USUARIO', 5, 0),
-                   (7, 'roberto.gonzalez@raicesvivas.com', 'admin', 'Roberto', 'González', 'DNI', '45678902', 'USUARIO', 5, 0),
-                   (8, 'ana.rodriguez@raicesvivas.com', 'admin', 'Ana', 'Rodríguez', 'DNI', '45678903', 'USUARIO', 5, 0),
-                   (9, 'miguel.fernandez@raicesvivas.com', 'admin', 'Miguel', 'Fernández', 'DNI', '45678904', 'USUARIO', 5, 0),
-                   (10, 'sofia.lopez@raicesvivas.com', 'admin', 'Sofía', 'López', 'DNI', '45678905', 'USUARIO', 5, 0),
-                   (11, 'diego.perez@raicesvivas.com', 'admin', 'Diego', 'Pérez', 'DNI', '45678906', 'USUARIO', 5, 0),
-                   (12, 'valeria.garcia@raicesvivas.com', 'admin', 'Valeria', 'García', 'DNI', '45678907', 'USUARIO', 5, 0),
-                   (13, 'carlos.sanchez@raicesvivas.com', 'admin', 'Carlos', 'Sánchez', 'DNI', '45678908', 'USUARIO', 5, 0),
-                   (14, 'marina.ruiz@raicesvivas.com', 'admin', 'Marina', 'Ruiz', 'DNI', '45678909', 'USUARIO', 5, 0),
-                   (15, 'fernando.diaz@raicesvivas.com', 'admin', 'Fernando', 'Díaz', 'DNI', '45678910', 'USUARIO', 5, 0)
-              ) AS v(id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, provincia_id, puntos)
+                   (6, 'laura.martinez@raicesvivas.com', 'admin', 'Laura', 'Martínez', 'DNI', '45678901', 'USUARIO', null, 5, 0),
+                   (7, 'roberto.gonzalez@raicesvivas.com', 'admin', 'Roberto', 'González', 'DNI', '45678902', 'USUARIO', null, 5, 0),
+                   (8, 'ana.rodriguez@raicesvivas.com', 'admin', 'Ana', 'Rodríguez', 'DNI', '45678903', 'USUARIO', null, 5, 0),
+                   (9, 'miguel.fernandez@raicesvivas.com', 'admin', 'Miguel', 'Fernández', 'DNI', '45678904', 'USUARIO', null, 5, 0),
+                   (10, 'sofia.lopez@raicesvivas.com', 'admin', 'Sofía', 'López', 'DNI', '45678905', 'USUARIO', null, 5, 0),
+                   (11, 'diego.perez@raicesvivas.com', 'admin', 'Diego', 'Pérez', 'DNI', '45678906', 'USUARIO', null, 5, 0),
+                   (12, 'valeria.garcia@raicesvivas.com', 'admin', 'Valeria', 'García', 'DNI', '45678907', 'USUARIO', null, 5, 0),
+                   (13, 'carlos.sanchez@raicesvivas.com', 'admin', 'Carlos', 'Sánchez', 'DNI', '45678908', 'USUARIO', null, 5, 0),
+                   (14, 'marina.ruiz@raicesvivas.com', 'admin', 'Marina', 'Ruiz', 'DNI', '45678909', 'USUARIO', null, 5, 0),
+                   (15, 'fernando.diaz@raicesvivas.com', 'admin', 'Fernando', 'Díaz', 'DNI', '45678910', 'USUARIO', null, 5, 0)
+              ) AS v(id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, ruta_img, provincia_id, puntos)
 WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE usuarios.email = v.email);
 
 -- Insertar sponsors

@@ -31,6 +31,9 @@ public class EventoResponseDto {
     private String organizadorRutaImg;
     private String provinciaNombre;
     private String sponsorNombre;
+    private String sponsorRutaImg1;
+    private String sponsorRutaImg2;
+    private String sponsorLinkDominio;
 
     // Datos del evento
     private String nombre;

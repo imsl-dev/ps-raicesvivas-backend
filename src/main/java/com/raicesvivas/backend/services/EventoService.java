@@ -336,6 +336,9 @@ public class EventoService {
         if (evento.getSponsor() != null) {
             dto.setSponsorId(evento.getSponsor().getId());
             dto.setSponsorNombre(evento.getSponsor().getNombre());
+            dto.setSponsorRutaImg1(evento.getSponsor().getRutaImg1());
+            dto.setSponsorRutaImg2(evento.getSponsor().getRutaImg2());
+            dto.setSponsorLinkDominio(evento.getSponsor().getLinkDominio());
         }
 
         if (evento.getCuentaBancaria() != null) {
