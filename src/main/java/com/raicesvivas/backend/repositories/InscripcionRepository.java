@@ -1,6 +1,7 @@
 package com.raicesvivas.backend.repositories;
 
 import com.raicesvivas.backend.models.entities.Inscripcion;
+import com.raicesvivas.backend.models.enums.EstadoInscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +25,5 @@ public interface InscripcionRepository extends JpaRepository<Inscripcion, Intege
     List<Object[]> findInscripcionesMensualesByYear(@Param("year") int year);
 
     Long countByEventoId(Integer eventoId);
+    Long countByEventoIdAndEstado(Integer eventoId, EstadoInscripcion estado);
 }

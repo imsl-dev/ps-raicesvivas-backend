@@ -218,3 +218,156 @@ SELECT setval('pagos_id_seq', COALESCE((SELECT MAX(id) FROM pagos), 1));
 
 -- Actualizar la secuencia de inscripciones
 SELECT setval('inscripciones_id_seq', COALESCE((SELECT MAX(id) FROM inscripciones), 1));
+
+-- ====================================================================
+-- DATOS ADICIONALES PARA REPORTES DEL ORGANIZADOR
+-- Agregar al final del archivo data.sql
+-- ====================================================================
+
+-- Crear más eventos para el organizador 2 (Juan Pablo Bauza) con diferentes estados
+INSERT INTO eventos (id, tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
+SELECT
+    id,
+    tipo,
+    estado,
+    organizador_id,
+    cuenta_bancaria_id::integer,
+    provincia_id,
+    nombre,
+    descripcion,
+    ruta_img,
+    direccion,
+    hora_inicio::timestamp,
+    hora_fin::timestamp,
+    puntos_asistencia,
+    costo_interno,
+    costo_inscripcion,
+    sponsor_id
+FROM (VALUES
+          -- Evento 6: FINALIZADO para organizador 2 (para tasa de asistencia)
+          (6, 'JUNTA_ALIMENTOS', 'FINALIZADO', 2, NULL, 5, 'Junta de Alimentos Solidaria Córdoba', 'Gran jornada de recolección de alimentos no perecederos para comedores comunitarios de la zona sur de Córdoba Capital.', 'https://www.lavoz.com.ar/resizer/v2/VRUPHUPYNJCTJKK2GE2RDKV3YQ.jpg?smart=true&auth=8b2e0a8b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r&width=980&height=640', 'Centro Vecinal Barrio Alberdi, Córdoba', '2025-09-15 09:00:00', '2025-09-15 18:00:00', 15, 200, 0, 1),
+
+          -- Evento 7: FINALIZADO para organizador 2
+          (7, 'DONACIONES', 'FINALIZADO', 2, NULL, 5, 'Donación de Ropa de Invierno', 'Campaña de donación de ropa de invierno para familias en situación de vulnerabilidad.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVxMQFTk5HJKMo1k8SrJfEj_I&usqp=CAU', 'Parroquia San Cayetano, Córdoba', '2025-08-20 10:00:00', '2025-08-20 16:00:00', 10, 150, 0, 2),
+
+          -- Evento 8: FINALIZADO para organizador 2
+          (8, 'RECOLECCION_BASURA', 'FINALIZADO', 2, NULL, 12, 'Limpieza del Río Mendoza', 'Jornada de limpieza de las márgenes del Río Mendoza, sector Luján de Cuyo.', 'https://www.mdzol.com/u/fotografias/m/2023/3/15/f768x1-1439234_1439361_5050.jpg', 'Costanera Río Mendoza, Luján de Cuyo', '2025-07-10 08:00:00', '2025-07-10 14:00:00', 20, 350, 50, 3),
+
+          -- Evento 9: PROXIMO para organizador 2
+          (9, 'REFORESTACION', 'PROXIMO', 2, NULL, 20, 'Reforestación Parque del Sur Santa Fe', 'Plantación de 500 árboles nativos en el Parque del Sur de la ciudad de Santa Fe.', 'https://www.santafe.gob.ar/noticias/resources/uploads/notas/img_64f32e5a1b2c3.jpg', 'Parque del Sur, Santa Fe Capital', '2026-03-15 08:00:00', '2026-03-15 16:00:00', 25, 600, 0, 1)
+     ) AS v(id, tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
+WHERE NOT EXISTS (
+    SELECT 1 FROM eventos e WHERE e.id = v.id
+);
+
+-- Actualizar secuencia de eventos
+SELECT setval('eventos_id_seq', COALESCE((SELECT MAX(id) FROM eventos), 1));
+
+-- Inscripciones para los nuevos eventos finalizados del organizador 2
+-- Evento 6: 12 inscriptos (8 PRESENTE, 4 AUSENTE)
+-- Evento 7: 10 inscriptos (7 PRESENTE, 3 AUSENTE)
+-- Evento 8: 8 inscriptos (5 PRESENTE, 3 AUSENTE)
+INSERT INTO inscripciones (usuario_id, evento_id, estado, fecha_creacion)
+SELECT
+    usuario_id,
+    evento_id,
+    estado,
+    fecha_creacion
+FROM (VALUES
+          -- Inscripciones Evento 6 (Junta de Alimentos)
+          (4, 6, 'PRESENTE', '2025-09-10 10:00:00'::timestamp),
+          (5, 6, 'PRESENTE', '2025-09-11 11:00:00'::timestamp),
+          (6, 6, 'PRESENTE', '2025-09-11 14:00:00'::timestamp),
+          (7, 6, 'PRESENTE', '2025-09-12 09:00:00'::timestamp),
+          (8, 6, 'PRESENTE', '2025-09-12 15:00:00'::timestamp),
+          (9, 6, 'PRESENTE', '2025-09-13 10:00:00'::timestamp),
+          (10, 6, 'PRESENTE', '2025-09-13 16:00:00'::timestamp),
+          (11, 6, 'PRESENTE', '2025-09-14 08:00:00'::timestamp),
+          (12, 6, 'AUSENTE', '2025-09-14 12:00:00'::timestamp),
+          (13, 6, 'AUSENTE', '2025-09-14 14:00:00'::timestamp),
+          (14, 6, 'AUSENTE', '2025-09-15 07:00:00'::timestamp),
+          (15, 6, 'AUSENTE', '2025-09-15 08:00:00'::timestamp),
+
+          -- Inscripciones Evento 7 (Donación Ropa)
+          (4, 7, 'PRESENTE', '2025-08-15 09:00:00'::timestamp),
+          (5, 7, 'PRESENTE', '2025-08-15 10:00:00'::timestamp),
+          (6, 7, 'PRESENTE', '2025-08-16 11:00:00'::timestamp),
+          (7, 7, 'PRESENTE', '2025-08-16 14:00:00'::timestamp),
+          (8, 7, 'PRESENTE', '2025-08-17 09:00:00'::timestamp),
+          (9, 7, 'PRESENTE', '2025-08-17 15:00:00'::timestamp),
+          (10, 7, 'PRESENTE', '2025-08-18 10:00:00'::timestamp),
+          (11, 7, 'AUSENTE', '2025-08-18 12:00:00'::timestamp),
+          (12, 7, 'AUSENTE', '2025-08-19 09:00:00'::timestamp),
+          (13, 7, 'AUSENTE', '2025-08-19 14:00:00'::timestamp),
+
+          -- Inscripciones Evento 8 (Limpieza Río)
+          (4, 8, 'PRESENTE', '2025-07-05 08:00:00'::timestamp),
+          (5, 8, 'PRESENTE', '2025-07-05 10:00:00'::timestamp),
+          (6, 8, 'PRESENTE', '2025-07-06 09:00:00'::timestamp),
+          (7, 8, 'PRESENTE', '2025-07-06 14:00:00'::timestamp),
+          (8, 8, 'PRESENTE', '2025-07-07 11:00:00'::timestamp),
+          (9, 8, 'AUSENTE', '2025-07-08 10:00:00'::timestamp),
+          (10, 8, 'AUSENTE', '2025-07-09 08:00:00'::timestamp),
+          (11, 8, 'AUSENTE', '2025-07-09 12:00:00'::timestamp)
+     ) AS v(usuario_id, evento_id, estado, fecha_creacion)
+WHERE NOT EXISTS (
+    SELECT 1 FROM inscripciones i
+    WHERE i.usuario_id = v.usuario_id
+      AND i.evento_id = v.evento_id
+);
+
+-- Actualizar secuencia de inscripciones
+SELECT setval('inscripciones_id_seq', COALESCE((SELECT MAX(id) FROM inscripciones), 1));
+
+-- Donaciones adicionales para eventos del organizador 2
+INSERT INTO pagos (usuario_id, evento_id, tipo_pago, estado_pago, monto, fecha_creacion, fecha_actualizacion, mensaje)
+SELECT
+    usuario_id,
+    evento_id,
+    tipo_pago,
+    estado_pago,
+    monto,
+    fecha_creacion::timestamp,
+    fecha_actualizacion::timestamp,
+    mensaje
+FROM (VALUES
+          -- Donaciones Evento 6 (Junta de Alimentos)
+          (4, 6, 'DONACION', 'APROBADO', 300.00, '2025-09-12 10:30:00', '2025-09-12 10:35:00',
+           'Un pequeño gesto puede hacer una gran diferencia. Unidos por los que más necesitan.'),
+          (5, 6, 'DONACION', 'APROBADO', 450.00, '2025-09-13 14:20:00', '2025-09-13 14:25:00',
+           'Compartir es la mejor forma de multiplicar. Gracias por esta iniciativa solidaria.'),
+          (7, 6, 'DONACION', 'APROBADO', 200.00, '2025-09-14 09:15:00', '2025-09-14 09:20:00',
+           'Nadie se salva solo. Juntos construimos una comunidad más fuerte.'),
+
+          -- Donaciones Evento 7 (Donación Ropa)
+          (4, 7, 'DONACION', 'APROBADO', 350.00, '2025-08-17 11:00:00', '2025-08-17 11:05:00',
+           'El frío no espera. Gracias por ayudar a quienes más lo necesitan este invierno.'),
+          (6, 7, 'DONACION', 'APROBADO', 500.00, '2025-08-18 15:30:00', '2025-08-18 15:35:00',
+           'Abrigar un cuerpo es también calentar un corazón. Feliz de poder aportar.'),
+
+          -- Donaciones Evento 8 (Limpieza Río)
+          (5, 8, 'DONACION', 'APROBADO', 600.00, '2025-07-08 10:00:00', '2025-07-08 10:05:00',
+           'Nuestros ríos son vida. Cuidarlos es nuestra responsabilidad con las futuras generaciones.'),
+          (8, 8, 'DONACION', 'APROBADO', 400.00, '2025-07-09 16:45:00', '2025-07-09 16:50:00',
+           'El agua limpia es un derecho de todos. Orgulloso de contribuir a esta causa.'),
+          (10, 8, 'DONACION', 'APROBADO', 250.00, '2025-07-10 08:30:00', '2025-07-10 08:35:00',
+           'Por un medio ambiente más sano para nuestros hijos.'),
+
+          -- Más donaciones para eventos 1 y 2 (también del organizador 2)
+          (6, 1, 'DONACION', 'APROBADO', 800.00, '2025-12-01 09:00:00', '2025-12-01 09:05:00',
+           'Los bosques son el hogar de miles de especies. Protegerlos es proteger la vida.'),
+          (7, 1, 'DONACION', 'APROBADO', 350.00, '2025-12-02 14:30:00', '2025-12-02 14:35:00',
+           'Cada árbol plantado es un paso hacia un futuro más verde.'),
+          (8, 2, 'DONACION', 'APROBADO', 275.00, '2025-12-03 11:15:00', '2025-12-03 11:20:00',
+           'Mantener limpio nuestro barrio es tarea de todos. Gran iniciativa!')
+     ) AS v(usuario_id, evento_id, tipo_pago, estado_pago, monto, fecha_creacion, fecha_actualizacion, mensaje)
+WHERE NOT EXISTS (
+    SELECT 1 FROM pagos p
+    WHERE p.usuario_id = v.usuario_id
+      AND p.evento_id = v.evento_id
+      AND p.tipo_pago = v.tipo_pago::text
+        AND p.mensaje = v.mensaje
+);
+
+-- Actualizar la secuencia de pagos
+SELECT setval('pagos_id_seq', COALESCE((SELECT MAX(id) FROM pagos), 1));

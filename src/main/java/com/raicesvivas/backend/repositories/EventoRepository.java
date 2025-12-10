@@ -40,4 +40,19 @@ public interface EventoRepository extends JpaRepository<Evento, Integer> {
             @Param("esGratuito") Boolean esGratuito,
             Pageable pageable
     );
+
+    @Query("SELECT e FROM Evento e WHERE " +
+            "e.organizador.id = :organizadorId AND " +
+            "(:nombre IS NULL OR :nombre = '' OR LOWER(CAST(e.nombre AS string)) LIKE LOWER(CONCAT('%', :nombre, '%'))) AND " +
+            "(:tipo IS NULL OR e.tipo = :tipo) AND " +
+            "(:esGratuito IS NULL OR " +
+            "   ((:esGratuito = true AND (e.costoInscripcion IS NULL OR e.costoInscripcion = 0)) OR " +
+            "    (:esGratuito = false AND e.costoInscripcion IS NOT NULL AND e.costoInscripcion > 0)))")
+    Page<Evento> findEventosOrganizadorConFiltros(
+            @Param("organizadorId") Integer organizadorId,
+            @Param("nombre") String nombre,
+            @Param("tipo") TipoEvento tipo,
+            @Param("esGratuito") Boolean esGratuito,
+            Pageable pageable
+    );
 }
