@@ -38,41 +38,41 @@ SELECT * FROM (VALUES
                    (1, 'admin@raicesvivas.com', 'admin', 'Carlos', 'Administrador', 'DNI', '12345678', 'ADMIN', null, 5, 0),
                    (2, 'organizador@raicesvivas.com', 'admin', 'Juan Pablo', 'Bauza', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/C4D03AQGVW2fZ-M37fQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1648048631048?e=1766620800&v=beta&t=JvsdiKhQnWSv93zKTLZxnICqI7GhidugbNkrNzsfkAY', 5, 100),
                    (3, 'organizador2@raicesvivas.com', 'admin', 'Ignacio', 'Solis', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/D4D03AQFmYvVHXxSG8A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1725391616439?e=1766620800&v=beta&t=Hb3jHscXo_-FMrBCZQYpfWFO3uAtpK4h4z0OhLTOZfw', 9, 150),
-                   (4, 'user@raicesvivas.com', 'admin', 'Santiago', 'Usuario', 'DNI', '34567890', 'USUARIO', null, 5, 200),
-                   (5, 'user2@raicesvivas.com', 'admin', 'Luis', 'Vargas', 'DNI', '45678901', 'USUARIO', null, 11, 300),
+                   (4, 'usuario@raicesvivas.com', 'admin', 'Santiago', 'Perez', 'DNI', '34567890', 'USUARIO', null, 5, 350),
+                   (5, 'usuario2@raicesvivas.com', 'admin', 'Luis', 'Vargas', 'DNI', '45678901', 'USUARIO', null, 11, 300),
 
                    -- Nuevos usuarios (usuarios 6-15)
-                   (6, 'user3@raicesvivas.com', 'admin', 'María', 'González', 'DNI', '34567891', 'USUARIO', null, 5, 150),
-                   (7, 'user4@raicesvivas.com', 'admin', 'Pedro', 'Martínez', 'DNI', '34567892', 'USUARIO', null, 1, 250),
-                   (8, 'user5@raicesvivas.com', 'admin', 'Ana', 'López', 'DNI', '34567893', 'USUARIO', null, 20, 180),
-                   (9, 'user6@raicesvivas.com', 'admin', 'Jorge', 'Fernández', 'DNI', '34567894', 'USUARIO', null, 12, 220),
-                   (10, 'user7@raicesvivas.com', 'admin', 'Laura', 'Ramírez', 'DNI', '34567895', 'USUARIO', null, 5, 190),
-                   (11, 'user8@raicesvivas.com', 'admin', 'Diego', 'Torres', 'DNI', '34567896', 'USUARIO', null, 11, 210),
-                   (12, 'user9@raicesvivas.com', 'admin', 'Sofía', 'Ruiz', 'DNI', '34567897', 'USUARIO', null, 9, 160),
-                   (13, 'user10@raicesvivas.com', 'admin', 'Martín', 'Acosta', 'DNI', '34567898', 'USUARIO', null, 5, 240),
-                   (14, 'user11@raicesvivas.com', 'admin', 'Valeria', 'Castro', 'DNI', '34567899', 'USUARIO', null, 1, 170),
-                   (15, 'user12@raicesvivas.com', 'admin', 'Facundo', 'Morales', 'DNI', '34567900', 'USUARIO', null, 20, 200)
+                   (6, 'usuario3@raicesvivas.com', 'admin', 'María', 'González', 'DNI', '34567891', 'USUARIO', null, 5, 150),
+                   (7, 'usuario4@raicesvivas.com', 'admin', 'Pedro', 'Martínez', 'DNI', '34567892', 'USUARIO', null, 1, 250),
+                   (8, 'usuario5@raicesvivas.com', 'admin', 'Ana', 'López', 'DNI', '34567893', 'USUARIO', null, 20, 180),
+                   (9, 'usuario6@raicesvivas.com', 'admin', 'Jorge', 'Fernández', 'DNI', '34567894', 'USUARIO', null, 12, 220),
+                   (10, 'usuario7@raicesvivas.com', 'admin', 'Laura', 'Ramírez', 'DNI', '34567895', 'USUARIO', null, 5, 190),
+                   (11, 'usuario8@raicesvivas.com', 'admin', 'Diego', 'Torres', 'DNI', '34567896', 'USUARIO', null, 11, 210),
+                   (12, 'usuario9@raicesvivas.com', 'admin', 'Sofía', 'Ruiz', 'DNI', '34567897', 'USUARIO', null, 9, 160),
+                   (13, 'usuario10@raicesvivas.com', 'admin', 'Martín', 'Acosta', 'DNI', '34567898', 'USUARIO', null, 5, 240),
+                   (14, 'usuario11@raicesvivas.com', 'admin', 'Valeria', 'Castro', 'DNI', '34567899', 'USUARIO', null, 1, 170),
+                   (15, 'usuario12@raicesvivas.com', 'admin', 'Facundo', 'Morales', 'DNI', '34567900', 'USUARIO', null, 20, 200)
               ) AS v(id, email, password, nombre, apellido, tipo_documento, nro_doc, rol, ruta_img, provincia_id, puntos)
 WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE usuarios.email = v.email);
 
 -- Insertar cuentas bancarias (solo si no existen)
 INSERT INTO cuentas_bancarias (cbu, id_usuario)
 SELECT * FROM (VALUES
-                   (12345678901234567890, 2),
-                   (23456789012345678901, 3)
+                   (1234, 2),
+                   (9876, 3)
               ) AS v(cbu, id_usuario)
 WHERE NOT EXISTS (SELECT 1 FROM cuentas_bancarias WHERE cuentas_bancarias.cbu = v.cbu);
 
 -- Insertar sponsors
-INSERT INTO sponsors (nombre, link_dominio, ruta_img1, ruta_img2, activo)
+INSERT INTO sponsors (id, nombre, link_dominio, ruta_img1, ruta_img2, activo)
 SELECT * FROM (VALUES
-                   ('Coca Cola', 'https://www.coca-cola.com/ar/es', 'https://www.cocacolaep.com/assets/legacy-assets/Uploads/resources/Coca-Cola-1210__FocusFillWyIwLjAwIiwiMC4wMCIsMTM3Niw1MzJd.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQe0QogSQXZmAqf45bXvsjKT4SyWlcuvJajA&s', true),
-                   ('Grido', 'https://argentina.gridohelado.com/', 'https://media.licdn.com/dms/image/v2/D4D0BAQH0hm5N81H1zA/company-logo_200_200/B4DZcxhTzvGgAQ-/0/1748882505376/gridohelados_logo?e=2147483647&v=beta&t=GeEC_C1FzEi2Utpsdt-2UxgNkvbh2FlofsQrlliWx-4', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfFOMdRG-pX8Vb-T73Ipvdkvw_k2ILfAC3Bw&s', true),
-                   ('Branca', 'https://www.branca.com.ar/', 'https://lacoloniawinestore.com.ar/wp-content/uploads/2021/08/LOGO-BRANCA.png', '', true),
-                   ('Starbucks', 'https://www.starbucks.com.ar/', 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png', '', true),
-                   ('Nike', 'https://www.nike.com/ar/', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/1200px-Logo_NIKE.svg.png', '', true),
-                   ('Burger King', 'https://www.burgerking.com.ar/', 'https://cdn.worldvectorlogo.com/logos/burger-king-1-logo.svg', '', true)
-              ) AS v(nombre, link_dominio, ruta_img1, ruta_img2, activo)
+                   (1, 'Coca Cola', 'https://www.coca-cola.com/ar/es', 'https://www.cocacolaep.com/assets/legacy-assets/Uploads/resources/Coca-Cola-1210__FocusFillWyIwLjAwIiwiMC4wMCIsMTM3Niw1MzJd.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQe0QogSQXZmAqf45bXvsjKT4SyWlcuvJajA&s', true),
+                   (2, 'Grido', 'https://argentina.gridohelado.com/', 'https://media.licdn.com/dms/image/v2/D4D0BAQH0hm5N81H1zA/company-logo_200_200/B4DZcxhTzvGgAQ-/0/1748882505376/gridohelados_logo?e=2147483647&v=beta&t=GeEC_C1FzEi2Utpsdt-2UxgNkvbh2FlofsQrlliWx-4', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfFOMdRG-pX8Vb-T73Ipvdkvw_k2ILfAC3Bw&s', true),
+                   (3, 'Branca', 'https://www.branca.com.ar/', 'https://lacoloniawinestore.com.ar/wp-content/uploads/2021/08/LOGO-BRANCA.png', '', true),
+                   (4, 'Starbucks', 'https://www.starbucks.com.ar/', 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png', '', true),
+                   (5, 'Nike', 'https://www.nike.com/ar/', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/1200px-Logo_NIKE.svg.png', '', true),
+                   (6, 'Burger King', 'https://www.burgerking.com.ar/', 'https://www.iviali.it/wp-content/uploads/sites/20/2023/12/Burger-King-logo.png', '', true)
+              ) AS v(id, nombre, link_dominio, ruta_img1, ruta_img2, activo)
 WHERE NOT EXISTS (
     SELECT 1 FROM sponsors s WHERE s.nombre = v.nombre
 );
@@ -104,33 +104,33 @@ FROM (VALUES
 
           (2, 'RECOLECCION_BASURA', 'PROXIMO', 2, NULL, 11, 'Recolección de Basura Villa Urquiza', 'Jornada de recolección voluntaria de residuos para mejorar la condición ambiental del barrio Villa Urquiza y promover la conciencia ecológica en la comunidad.', 'https://cordoba.gob.ar/wp-content/uploads/2021/03/WhatsApp-Image-2021-03-19-at-15.56.13-800x400.jpeg', 'Villa Urquiza, Córdoba Capital', -31.3890, -64.2314, '2025-12-20 10:30:00', '2025-12-20 15:30:00', 10, 300, 0, 2),
 
-          (3, 'REFORESTACION', 'PROXIMO', 3, NULL, 9, 'Reforestación Almirante Brown', 'Proyecto de reforestación de 20 km² en el Departamento Almirante Brown, Chaco. Las acciones están enfocadas en contrarrestar la deforestación ilegal y proteger los bosques nativos de la región.', 'https://www.sib.gob.ar/archivos/Reforestaci%C3%B3n%20para%20Chaco.jpg', 'Departamento Almirante Brown, Chaco', -26.4914, -61.1667, '2025-12-25 08:00:00', '2025-12-25 18:00:00', 25, 800, 200, 1),
+          (3, 'REFORESTACION', 'PROXIMO', 3, NULL, 9, 'Reforestación Almirante Brown', 'Proyecto de reforestación de 20 km² en el Departamento Almirante Brown, Chaco. Las acciones están enfocadas en contrarrestar la deforestación ilegal y proteger los bosques nativos de la región.', 'https://imgs.mongabay.com/wp-content/uploads/sites/25/2020/05/27224323/gran-chaco-deforestacion-argentina-2.jpg', 'Departamento Almirante Brown, Chaco', -26.4914, -61.1667, '2025-12-25 08:00:00', '2025-12-25 18:00:00', 25, 800, 200, 1),
 
-          (4, 'JUNTA_ALIMENTOS', 'CANCELADO', 3, NULL, 9, 'Junta de Alimentos Resistencia', 'Campaña de recolección de alimentos no perecederos para familias en situación de vulnerabilidad en la ciudad de Resistencia.', 'https://www.ellitoral.com/images/2023/05/26/HFxKIEn6c_1256x620__1.jpg', 'Plaza 25 de Mayo, Resistencia', -27.4514, -58.9867, '2025-11-01 09:00:00', '2025-11-01 18:00:00', 15, 400, 0, 2),
+          (4, 'JUNTA_ALIMENTOS', 'CANCELADO', 3, NULL, 9, 'Junta de Alimentos Resistencia', 'Campaña de recolección de alimentos no perecederos para familias en situación de vulnerabilidad en la ciudad de Resistencia.', 'https://www.argentina.gob.ar/sites/default/files/23-05-03_chaco_inocuidad_6.jpeg', 'Plaza 25 de Mayo, Resistencia', -27.4514, -58.9867, '2025-11-01 09:00:00', '2025-11-01 18:00:00', 15, 400, 0, 2),
 
           (5, 'DONACIONES', 'FINALIZADO', 3, NULL, 9, 'Apoyo a los Niños de Cochagual', 'Evento de apoyo integral a la Escuela 399 de Cochagual, que sufrió un incendio en 2021. Fue un desafío enorme para las familias, los docentes y toda la comunidad. Hoy la realidad es distinta: ya cuentan con un edificio nuevo, seguro y moderno, con aulas cómodas y servicios que garantizan la tranquilidad de enseñar y aprender con las condiciones adecuadas.', 'https://sisanjuan.b-cdn.net/media/k2/items/cache/ae44d2dd91a73b393523b3a0d4ac8bc4_L.jpg', 'CARMONA S/N COCHAGUAL CENTRO', -26.7667, -60.9167, '2025-10-03 07:00:00', '2025-10-03 21:00:00', 15, 100, NULL, 3),
 
           -- EVENTOS ADICIONALES CON COORDENADAS
-          (6, 'JUNTA_ALIMENTOS', 'FINALIZADO', 2, NULL, 5, 'Junta de Alimentos Solidaria Córdoba', 'Gran jornada de recolección de alimentos no perecederos para comedores comunitarios de la zona sur de Córdoba Capital. Se lograron reunir más de 2 toneladas de alimentos.', 'https://www.lavoz.com.ar/resizer/v2/VRUPHUPYNJCTJKK2GE2RDKV3YQ.jpg?smart=true&auth=8b2e0a8b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r&width=980&height=640', 'Centro Vecinal Barrio Alberdi, Córdoba', -31.4135, -64.1888, '2025-09-15 09:00:00', '2025-09-15 18:00:00', 15, 200, 0, 1),
+          (6, 'JUNTA_ALIMENTOS', 'FINALIZADO', 2, NULL, 5, 'Junta de Alimentos Solidaria Córdoba', 'Gran jornada de recolección de alimentos no perecederos para comedores comunitarios de la zona sur de Córdoba Capital. Se lograron reunir más de 2 toneladas de alimentos.', 'https://bancodealimentoscba.org.ar/wp-content/uploads/2019/02/DSC04301.jpg', 'Centro Vecinal Barrio Alberdi, Córdoba', -31.4135, -64.1888, '2025-09-15 09:00:00', '2025-09-15 18:00:00', 15, 200, 0, 1),
 
-          (7, 'DONACIONES', 'FINALIZADO', 2, NULL, 5, 'Donación de Ropa de Invierno', 'Campaña de donación de ropa de invierno para familias en situación de vulnerabilidad. Se recibieron más de 500 prendas que fueron distribuidas a quienes más lo necesitan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVxMQFTk5HJKMo1k8SrJfEj_I&usqp=CAU', 'Parroquia San Cayetano, Córdoba', -31.4201, -64.1888, '2025-08-20 10:00:00', '2025-08-20 16:00:00', 10, 150, 0, 2),
+          (7, 'DONACIONES', 'FINALIZADO', 2, NULL, 5, 'Donación de Ropa de Invierno', 'Campaña de donación de ropa de invierno para familias en situación de vulnerabilidad. Se recibieron más de 500 prendas que fueron distribuidas a quienes más lo necesitan.', 'https://sigmaearth.com/wp-content/uploads/2024/10/word-image-67039-1.png', 'Parroquia San Cayetano, Córdoba', -31.4201, -64.1888, '2025-08-20 10:00:00', '2025-08-20 16:00:00', 10, 150, 0, 2),
 
-          (8, 'RECOLECCION_BASURA', 'FINALIZADO', 2, NULL, 12, 'Limpieza del Río Mendoza', 'Jornada de limpieza de las márgenes del Río Mendoza, sector Luján de Cuyo. Participaron más de 80 voluntarios que retiraron residuos plásticos y escombros.', 'https://www.mdzol.com/u/fotografias/m/2023/3/15/f768x1-1439234_1439361_5050.jpg', 'Costanera Río Mendoza, Luján de Cuyo', -33.0368, -68.8779, '2025-07-10 08:00:00', '2025-07-10 14:00:00', 20, 350, 50, 3),
+          (8, 'RECOLECCION_BASURA', 'FINALIZADO', 2, NULL, 12, 'Limpieza del Río Mendoza', 'Jornada de limpieza de las márgenes del Río Mendoza, sector Luján de Cuyo. Participaron más de 80 voluntarios que retiraron residuos plásticos y escombros.', 'https://www.infoviajera.com/wp-content/uploads/2020/11/Argentina_Mendoza_Lujan_de_Cuyo_Lujan_Playa_Rio_Corriente.jpg', 'Costanera Río Mendoza, Luján de Cuyo', -33.0368, -68.8779, '2025-07-10 08:00:00', '2025-07-10 14:00:00', 20, 350, 50, 3),
 
-          (9, 'REFORESTACION', 'PROXIMO', 2, NULL, 20, 'Reforestación Parque del Sur Santa Fe', 'Plantación de 500 árboles nativos en el Parque del Sur de la ciudad de Santa Fe. Una iniciativa para aumentar las áreas verdes urbanas y mejorar la calidad del aire.', 'https://www.santafe.gob.ar/noticias/resources/uploads/notas/img_64f32e5a1b2c3.jpg', 'Parque del Sur, Santa Fe Capital', -31.6333, -60.7000, '2026-03-15 08:00:00', '2026-03-15 16:00:00', 25, 600, 0, 1),
+          (9, 'REFORESTACION', 'PROXIMO', 2, NULL, 20, 'Reforestación Parque del Sur Santa Fe', 'Plantación de 500 árboles nativos en el Parque del Sur de la ciudad de Santa Fe. Una iniciativa para aumentar las áreas verdes urbanas y mejorar la calidad del aire.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnBQMLy7D1o0i92wIsiInn65cmhw__ErdLnQ&s', 'Parque del Sur, Santa Fe Capital', -31.6333, -60.7000, '2026-03-15 08:00:00', '2026-03-15 16:00:00', 25, 600, 0, 1),
 
           -- NUEVOS EVENTOS CON COORDENADAS
-          (10, 'RECOLECCION_BASURA', 'PROXIMO', 2, NULL, 1, 'Limpieza Costera Mar del Plata', 'Limpieza de playas en Mar del Plata enfocada en la recolección de plásticos y microplásticos que afectan el ecosistema marino. Actividad familiar con refrigerio incluido.', 'https://www.0223.com.ar/media/img/2024/01/29/whatsapp-image-2024-01-29-at-12-25-43-1_crop1706545577829.jpg', 'Playa Bristol, Mar del Plata', -38.0055, -57.5426, '2026-01-15 09:00:00', '2026-01-15 14:00:00', 15, 250, 0, 2),
+          (10, 'RECOLECCION_BASURA', 'PROXIMO', 2, NULL, 1, 'Limpieza Costera Mar del Plata', 'Limpieza de playas en Mar del Plata enfocada en la recolección de plásticos y microplásticos que afectan el ecosistema marino. Actividad familiar con refrigerio incluido.', 'https://pxcdn.0223.com.ar/f/112015/1446744081081.webp?cw=748&ch=420&extw=jpg', 'Playa Bristol, Mar del Plata', -38.0055, -57.5426, '2026-01-15 09:00:00', '2026-01-15 14:00:00', 15, 250, 0, 2),
 
-          (11, 'JUNTA_ALIMENTOS', 'PROXIMO', 3, NULL, 23, 'Colecta Alimentaria San Miguel de Tucumán', 'Campaña de recolección de alimentos para merenderos barriales. Se busca reunir productos no perecederos, leche en polvo y alimentos para niños.', 'https://www.eltucumano.com/fotos/202212/1671468506_colecta.jpg', 'Plaza Independencia, San Miguel de Tucumán', -26.8241, -65.2226, '2026-02-10 10:00:00', '2026-02-10 18:00:00', 12, 180, 0, 1),
+          (11, 'JUNTA_ALIMENTOS', 'PROXIMO', 3, NULL, 23, 'Colecta Alimentaria San Miguel de Tucumán', 'Campaña de recolección de alimentos para merenderos barriales. Se busca reunir productos no perecederos, leche en polvo y alimentos para niños.', 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/89/ed/67/catedral-de-san-miguel.jpg?w=500&h=400&s=1', 'Plaza Independencia, San Miguel de Tucumán', -26.8241, -65.2226, '2026-02-10 10:00:00', '2026-02-10 18:00:00', 12, 180, 0, 1),
 
-          (12, 'REFORESTACION', 'PROXIMO', 2, NULL, 17, 'Reforestación Valle Fértil', 'Jornada de plantación de especies nativas en Valle Fértil, San Juan. Se plantarán algarrobos y chañares para recuperar la vegetación autóctona del valle.', 'https://www.sisanjuan.gob.ar/prensa/wp-content/uploads/sites/5/2023/09/valle-fertil-parque-ischigualasto.jpg', 'Valle Fértil, San Juan', -30.6333, -67.4667, '2026-04-22 08:00:00', '2026-04-22 16:00:00', 30, 700, 150, 3),
+          (12, 'REFORESTACION', 'PROXIMO', 2, NULL, 17, 'Reforestación Valle Fértil', 'Jornada de plantación de especies nativas en Valle Fértil, San Juan. Se plantarán algarrobos y chañares para recuperar la vegetación autóctona del valle.', 'https://cdn.agroempresario.com/images/posts/dfce273aa8c02de7edad50d109fe9ac4dc0047fe1649d4c7_840.jpg', 'Valle Fértil, San Juan', -30.6333, -67.4667, '2026-04-22 08:00:00', '2026-04-22 16:00:00', 30, 700, 150, 3),
 
-          (13, 'DONACIONES', 'EN_CURSO', 2, NULL, 5, 'Donación de Útiles Escolares Córdoba', 'Campaña de recolección de útiles escolares para escuelas de bajos recursos en Córdoba Capital. Mochilas, cuadernos, lápices y materiales educativos.', 'https://www.cba24n.com.ar/u/fotografias/m/2024/2/26/f1280x720-1383099_1517174_5050.jpg', 'Municipalidad de Córdoba', -31.4201, -64.1888, '2025-12-01 09:00:00', '2026-03-01 18:00:00', 10, 300, 0, 2),
+          (13, 'DONACIONES', 'EN_CURSO', 2, NULL, 5, 'Donación de Útiles Escolares Córdoba', 'Campaña de recolección de útiles escolares para escuelas de bajos recursos en Córdoba Capital. Mochilas, cuadernos, lápices y materiales educativos.', 'https://cloudfront-us-east-1.images.arcpublishing.com/grupoclarin/I67K3ID6BFGVBNHXIDAUOARNEE.JPG', 'Municipalidad de Córdoba', -31.4201, -64.1888, '2025-12-01 09:00:00', '2026-03-01 18:00:00', 10, 300, 0, 2),
 
-          (14, 'RECOLECCION_BASURA', 'PROXIMO', 3, NULL, 16, 'Limpieza Quebrada de Humahuaca', 'Jornada de limpieza en la Quebrada de Humahuaca, Patrimonio de la Humanidad. Actividad coordinada con comunidades locales para preservar este sitio natural e histórico.', 'https://www.todojujuy.com/fotos-nuevas/2023/06/quebrada-de-humahuaca-6493e93b1e5a7.jpg', 'Quebrada de Humahuaca, Jujuy', -23.2033, -65.3483, '2026-05-20 08:00:00', '2026-05-20 15:00:00', 20, 400, 100, 1),
+          (14, 'RECOLECCION_BASURA', 'PROXIMO', 3, NULL, 16, 'Limpieza Quebrada de Humahuaca', 'Jornada de limpieza en la Quebrada de Humahuaca, Patrimonio de la Humanidad. Actividad coordinada con comunidades locales para preservar este sitio natural e histórico.', 'https://upload.wikimedia.org/wikipedia/commons/c/ce/En_la_Quebrada_de_Humahuaca_.jpg', 'Quebrada de Humahuaca, Jujuy', -23.2033, -65.3483, '2026-05-20 08:00:00', '2026-05-20 15:00:00', 20, 400, 100, 1),
 
-          (15, 'JUNTA_ALIMENTOS', 'PROXIMO', 2, NULL, 14, 'Colecta Solidaria Neuquén Capital', 'Recolección de alimentos y artículos de primera necesidad para familias afectadas por las nevadas en la región andina de Neuquén.', 'https://www.rionegro.com.ar/wp-content/uploads/2023/07/colecta.jpg', 'Plaza de las Banderas, Neuquén Capital', -38.9516, -68.0591, '2026-06-15 10:00:00', '2026-06-15 17:00:00', 15, 220, 0, 2)
+          (15, 'JUNTA_ALIMENTOS', 'PROXIMO', 2, NULL, 14, 'Colecta Solidaria Neuquén Capital', 'Recolección de alimentos y artículos de primera necesidad para familias afectadas por las nevadas en la región andina de Neuquén.', 'https://www.cooperativacalf.com.ar/wp-content/uploads/2019/03/Pobreza2.jpg', 'Plaza de las Banderas, Neuquén Capital', -38.9516, -68.0591, '2026-06-15 10:00:00', '2026-06-15 17:00:00', 15, 220, 0, 2)
 
      ) AS v(id, tipo, estado, organizador_id, cuenta_bancaria_id, provincia_id, nombre, descripcion, ruta_img, direccion, latitud, longitud, hora_inicio, hora_fin, puntos_asistencia, costo_interno, costo_inscripcion, sponsor_id)
 WHERE NOT EXISTS (
@@ -385,3 +385,44 @@ WHERE NOT EXISTS (
 
 -- Actualizar secuencia de canjeables
 SELECT setval('canjeables_id_seq', COALESCE((SELECT MAX(id) FROM canjeables), 1));
+
+-- ====================================================================
+-- CUPONES COMPRADOS POR USUARIOS 1 Y 2
+-- ====================================================================
+
+-- Insertar canjeables (cupones disponibles)
+INSERT INTO canjeables (nombre, sponsor_id, url, costo_puntos, valido_hasta, activo, nombre_sponsor)
+SELECT * FROM (VALUES
+                   ('10% OFF en toda la línea Coca-Cola', 1, 'https://www.coca-cola.com/ar/es/promociones', 50, '2026-12-31 23:59:59'::timestamp, true, 'Coca Cola'),
+                   ('2x1 en helados Grido', 2, 'https://argentina.gridohelado.com/promociones', 80, '2026-06-30 23:59:59'::timestamp, true, 'Grido'),
+                   ('15% OFF en Fernet Branca 750ml', 3, 'https://www.branca.com.ar/promociones', 100, '2026-08-31 23:59:59'::timestamp, true, 'Branca'),
+                   ('Combo Coca-Cola + snack', 1, 'https://www.coca-cola.com/ar/es/combos', 60, '2026-12-31 23:59:59'::timestamp, true, 'Coca Cola'),
+                   ('1kg de helado Grido a precio especial', 2, 'https://argentina.gridohelado.com/ofertas', 120, '2026-07-31 23:59:59'::timestamp, true, 'Grido')
+              ) AS v(nombre, sponsor_id, url, costo_puntos, valido_hasta, activo, nombre_sponsor)
+WHERE NOT EXISTS (
+    SELECT 1 FROM canjeables c WHERE c.nombre = v.nombre
+);
+
+-- Actualizar secuencia de canjeables
+SELECT setval('canjeables_id_seq', COALESCE((SELECT MAX(id) FROM canjeables), 1));
+
+-- Insertar relaciones usuario_canjeables (cupones comprados)
+INSERT INTO usuario_canjeables (usuario_id, canjeable_id)
+SELECT
+    usuario_id,
+    canjeable_id
+FROM (VALUES
+          -- Usuario 1 tiene los cupones 1 y 3
+          (4, (SELECT id FROM canjeables WHERE nombre = '10% OFF en toda la línea Coca-Cola' LIMIT 1)),
+     (4, (SELECT id FROM canjeables WHERE nombre = '15% OFF en Fernet Branca 750ml' LIMIT 1)),
+
+     -- Usuario 2 tiene los cupones 2, 4 y 5
+     (5, (SELECT id FROM canjeables WHERE nombre = '2x1 en helados Grido' LIMIT 1)),
+     (5, (SELECT id FROM canjeables WHERE nombre = 'Combo Coca-Cola + snack' LIMIT 1)),
+     (5, (SELECT id FROM canjeables WHERE nombre = '1kg de helado Grido a precio especial' LIMIT 1))
+    ) AS v(usuario_id, canjeable_id)
+WHERE NOT EXISTS (
+    SELECT 1 FROM usuario_canjeables uc
+    WHERE uc.usuario_id = v.usuario_id
+  AND uc.canjeable_id = v.canjeable_id
+    );
