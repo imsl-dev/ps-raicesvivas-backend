@@ -152,4 +152,22 @@ public class EmailService {
         enviarMail(emailRequestDto);
     }
 
+    public void EnviarEmailNuevaPeticionOrganizador(Usuario organizador){
+        EmailRequestDto emailRequestDto = new EmailRequestDto();
+        emailRequestDto.setEmailDestinatario(MAIL_USERNAME);
+        emailRequestDto.setAsunto("📋 Nueva solicitud de organizador pendiente");
+        emailRequestDto.setTexto("¡Hola equipo de administración!\n\n" +
+                "Un usuario ha enviado una nueva solicitud para convertirse en organizador de eventos.\n\n" +
+                "📌 Datos del solicitante:\n" +
+                "• Nombre: " + organizador.getNombre() + " " + organizador.getApellido() + "\n" +
+                "• Email: " + organizador.getEmail() + "\n" +
+                "• Documento: " + organizador.getTipoDocumento() + " - " + organizador.getNroDocumento() + "\n" +
+                "• Provincia: " + (organizador.getProvincia() != null ? organizador.getProvincia().getNombre() : "No especificada") + "\n\n" +
+                "Por favor, revisá la solicitud desde el Panel de Administración para aprobarla o rechazarla.\n\n" +
+                "¡Gracias por tu dedicación al equipo! 🌱\n" +
+                "— Sistema de Raíces Vivas");
+
+        enviarMail(emailRequestDto);
+    }
+
 }
