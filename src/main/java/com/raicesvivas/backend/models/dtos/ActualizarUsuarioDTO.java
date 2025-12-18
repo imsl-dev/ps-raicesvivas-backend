@@ -14,4 +14,6 @@ public class ActualizarUsuarioDTO {
     private Integer idProvincia;
 
     private String email;
+
+    private String rutaImg;
 }
