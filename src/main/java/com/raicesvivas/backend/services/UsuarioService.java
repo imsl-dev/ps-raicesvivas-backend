@@ -81,6 +81,10 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario con ID " + idUsuario + " no encontrado"));
 
         usuario.setRol(nuevoRol);
+        if (nuevoRol == RolUsuario.ORGANIZADOR) {
+            emailService.EnviarMailNuevoOrganizador(usuario);
+        }
+
         usuarioRepository.save(usuario);
 
         return true;

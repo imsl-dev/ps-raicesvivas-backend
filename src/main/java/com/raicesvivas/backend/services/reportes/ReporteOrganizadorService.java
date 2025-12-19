@@ -103,7 +103,7 @@ public class ReporteOrganizadorService {
 
     /**
      * Obtiene la recaudación neta por evento
-     * Recaudación neta = Total donaciones - Costo interno
+     * Recaudación neta = Total donaciones + Total inscripciones - Costo interno
      */
     public ReporteRecaudacionNetaEventoDto obtenerRecaudacionNetaPorEvento(Integer organizadorId) {
         List<Evento> eventosOrganizador = eventoRepository.findByOrganizadorId(organizadorId);
@@ -118,9 +118,15 @@ public class ReporteOrganizadorService {
                     .map(Pago::getMonto)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Restar costo interno
+            // Obtener total de inscripciones aprobadas para este evento
+            BigDecimal totalInscripciones = pagoRepository.findByEventoId(evento.getId()).stream()
+                    .filter(p -> TipoPago.INSCRIPCION.equals(p.getTipoPago()) && EstadoPago.APROBADO.equals(p.getEstadoPago()))
+                    .map(Pago::getMonto)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // Calcular neto: donaciones + inscripciones - costo interno
             BigDecimal costoInterno = evento.getCostoInterno() != null ? evento.getCostoInterno() : BigDecimal.ZERO;
-            BigDecimal neto = totalDonaciones.subtract(costoInterno);
+            BigDecimal neto = totalDonaciones.add(totalInscripciones).subtract(costoInterno);
 
             nombresEventos.add(evento.getNombre());
             recaudacionNeta.add(neto);

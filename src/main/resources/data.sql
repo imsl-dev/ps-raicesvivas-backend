@@ -37,7 +37,7 @@ SELECT * FROM (VALUES
                    -- Usuarios originales
                    (1, 'admin@raicesvivas.com', 'admin', 'Carlos', 'Administrador', 'DNI', '12345678', 'ADMIN', null, 5, 0),
                    (2, 'organizador@raicesvivas.com', 'admin', 'Juan Pablo', 'Bauza', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/C4D03AQGVW2fZ-M37fQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1648048631048?e=1766620800&v=beta&t=JvsdiKhQnWSv93zKTLZxnICqI7GhidugbNkrNzsfkAY', 5, 100),
-                   (3, 'organizador2@raicesvivas.com', 'admin', 'Ignacio', 'Solis', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/D4D03AQFmYvVHXxSG8A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1725391616439?e=1766620800&v=beta&t=Hb3jHscXo_-FMrBCZQYpfWFO3uAtpK4h4z0OhLTOZfw', 9, 150),
+                   (3, 'organizador2@raicesvivas.com', 'admin', 'Ignacio', 'Solis', 'DNI', '23456789', 'ORGANIZADOR', 'https://media.licdn.com/dms/image/v2/D4E03AQFRFYt3NH1sBQ/profile-displayphoto-shrink_800_800/B4EZWLlj0mG0Ag-/0/1741803635584?e=1767830400&v=beta&t=4hzsox9MgsJQohZCwYG1AE2JSC6_bDe0QrMhdYwyvQE', 9, 150),
                    (4, 'usuario@raicesvivas.com', 'admin', 'Santiago', 'Perez', 'DNI', '34567890', 'USUARIO', null, 5, 350),
                    (5, 'usuario2@raicesvivas.com', 'admin', 'Luis', 'Vargas', 'DNI', '45678901', 'USUARIO', null, 11, 300),
 
@@ -350,31 +350,31 @@ SELECT setval('inscripciones_id_seq', COALESCE((SELECT MAX(id) FROM inscripcione
 INSERT INTO canjeables (nombre, sponsor_id, url, costo_puntos, nombre_sponsor, valido_hasta, activo)
 SELECT * FROM (VALUES
                    -- Canjeables de Coca Cola (sponsor_id = 1)
-                   ('Descuento 20% en Coca-Cola 2.25L', 1, 'https://www.coca-cola.com/ar/es/promociones', 150, 'Coca Cola', '2026-06-30 23:59:59'::timestamp, true),
-                   ('2x1 en Coca-Cola Zero 500ml', 1, 'https://www.coca-cola.com/ar/es/promociones', 200, 'Coca Cola', '2026-03-31 23:59:59'::timestamp, true),
-                   ('Combo Coca-Cola: 4 latas + Vaso coleccionable', 1, 'https://www.coca-cola.com/ar/es/promociones', 350, 'Coca Cola', '2026-12-31 23:59:59'::timestamp, true),
+                   ('Descuento 20% en Coca-Cola 2.25L', 1, 'https://tienda.coca-cola.com.ar/147?map=productClusterIds&order=OrderByReleaseDateDESC', 150, 'Coca Cola', '2026-06-30 23:59:59'::timestamp, true),
+                   ('2x1 en Coca-Cola Zero 500ml', 1, 'https://tienda.coca-cola.com.ar/147?map=productClusterIds&order=OrderByReleaseDateDESC', 200, 'Coca Cola', '2026-03-31 23:59:59'::timestamp, true),
+                   ('Combo Coca-Cola: 4 latas + Vaso coleccionable', 1, 'https://tienda.coca-cola.com.ar/147?map=productClusterIds&order=OrderByReleaseDateDESC', 350, 'Coca Cola', '2026-12-31 23:59:59'::timestamp, true),
 
                    -- Canjeables de Grido (sponsor_id = 2)
-                   ('1 Kg de Helado Grido a precio especial', 2, 'https://argentina.gridohelado.com/promociones', 180, 'Grido', '2026-04-30 23:59:59'::timestamp, true),
-                   ('2x1 en Cucuruchos Grido', 2, 'https://argentina.gridohelado.com/promociones', 120, 'Grido', '2026-02-28 23:59:59'::timestamp, true),
-                   ('Descuento 25% en Tortas Heladas', 2, 'https://argentina.gridohelado.com/promociones', 300, 'Grido', '2026-08-31 23:59:59'::timestamp, true),
+                   ('1 Kg de Helado Grido a precio especial', 2, 'https://www.clubgrido.com.ar/', 180, 'Grido', '2026-04-30 23:59:59'::timestamp, true),
+                   ('2x1 en Cucuruchos Grido', 2, 'https://www.clubgrido.com.ar/', 120, 'Grido', '2026-02-28 23:59:59'::timestamp, true),
+                   ('Descuento 25% en Tortas Heladas', 2, 'https://www.clubgrido.com.ar/', 300, 'Grido', '2026-08-31 23:59:59'::timestamp, true),
 
                    -- Canjeables de Branca (sponsor_id = 3)
-                   ('Descuento 15% en Fernet Branca 750ml', 3, 'https://www.branca.com.ar/promociones', 220, 'Branca', '2026-05-31 23:59:59'::timestamp, true),
-                   ('Pack Fernet + Cola promocional', 3, 'https://www.branca.com.ar/promociones', 280, 'Branca', '2026-07-31 23:59:59'::timestamp, true),
+                   ('Descuento 15% en Fernet Branca 750ml', 3, 'https://www.brancastore.com.ar/', 220, 'Branca', '2026-05-31 23:59:59'::timestamp, true),
+                   ('Pack Fernet + Cola promocional', 3, 'https://www.brancastore.com.ar/', 280, 'Branca', '2026-07-31 23:59:59'::timestamp, true),
 
                    -- Canjeables de Starbucks (sponsor_id = 4)
-                   ('Café Grande gratis en Starbucks', 4, 'https://www.starbucks.com.ar/promociones', 250, 'Starbucks', '2026-09-30 23:59:59'::timestamp, true),
-                   ('2x1 en Frappuccino tamaño Grande', 4, 'https://www.starbucks.com.ar/promociones', 400, 'Starbucks', '2026-11-30 23:59:59'::timestamp, true),
-                   ('Descuento 30% en Pastelería', 4, 'https://www.starbucks.com.ar/promociones', 180, 'Starbucks', '2026-03-31 23:59:59'::timestamp, true),
+                   ('Café Grande gratis en Starbucks', 4, 'https://www.starbucks.com.ar/seccion/promociones', 250, 'Starbucks', '2026-09-30 23:59:59'::timestamp, true),
+                   ('2x1 en Frappuccino tamaño Grande', 4, 'https://www.starbucks.com.ar/seccion/promociones', 400, 'Starbucks', '2026-11-30 23:59:59'::timestamp, true),
+                   ('Descuento 30% en Pastelería', 4, 'https://www.starbucks.com.ar/seccion/promociones', 180, 'Starbucks', '2026-03-31 23:59:59'::timestamp, true),
 
                    -- Canjeables de Nike (sponsor_id = 5)
-                   ('Descuento 10% en Zapatillas Nike', 5, 'https://www.nike.com/ar/promociones', 500, 'Nike', '2026-12-31 23:59:59'::timestamp, true),
-                   ('15% OFF en Ropa Deportiva Nike', 5, 'https://www.nike.com/ar/promociones', 350, 'Nike', '2026-10-31 23:59:59'::timestamp, true),
+                   ('Descuento 10% en Zapatillas Nike', 5, 'https://www.nike.com.ar/calzado/oportunidades/oportunidades?map=categorias,productclusternames,productclusternames', 500, 'Nike', '2026-12-31 23:59:59'::timestamp, true),
+                   ('15% OFF en Ropa Deportiva Nike', 5, 'https://www.nike.com.ar/calzado/oportunidades/oportunidades?map=categorias,productclusternames,productclusternames', 350, 'Nike', '2026-10-31 23:59:59'::timestamp, true),
 
                    -- Canjeables de Burger King (sponsor_id = 6)
-                   ('Combo Whopper completo', 6, 'https://www.burgerking.com.ar/promociones', 320, 'Burger King', '2026-06-30 23:59:59'::timestamp, true),
-                   ('2x1 en Hamburguesas Medianas', 6, 'https://www.burgerking.com.ar/promociones', 250, 'Burger King', '2026-04-30 23:59:59'::timestamp, true)
+                   ('Combo Whopper completo', 6, 'https://www.burgerking.com.ar/en/rewards/offers', 320, 'Burger King', '2026-06-30 23:59:59'::timestamp, true),
+                   ('2x1 en Hamburguesas Medianas', 6, 'https://www.burgerking.com.ar/en/rewards/offers', 250, 'Burger King', '2026-04-30 23:59:59'::timestamp, true)
 
               ) AS v(nombre, sponsor_id, url, costo_puntos, nombre_sponsor, valido_hasta, activo)
 WHERE NOT EXISTS (
