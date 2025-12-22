@@ -19,9 +19,9 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-
     private final ProvinciaRepository provinciaRepository;
     private final ModelMapper mapper;
+    private final EmailService emailService;
 
     public List<Usuario> getAllUsuarios(){
         return usuarioRepository.findAll();
@@ -40,42 +40,53 @@ public class UsuarioService {
         nuevoUsuario.setProvincia(provincia);
         //TODO QUITAR PUNTOS HARDCODEADOS
         nuevoUsuario.setPuntos(1000);
-
+        emailService.EnviarMailBienvienida(nuevoUsuario);
         return usuarioRepository.save(nuevoUsuario);
     }
 
     public Usuario getUsuarioById(Integer id) {
 
         return usuarioRepository.findById(id).orElseThrow(()->
-            new EntityNotFoundException("Usuario con ID "+id+" no encontrado")
+                new EntityNotFoundException("Usuario con ID "+id+" no encontrado")
         );
     }
 
     public Usuario actualizarUsuario(ActualizarUsuarioDTO dto) {
 
-        Usuario usuarioExistente = getUsuarioById(dto.getId());
+        Usuario usuarioExistente = usuarioRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario con ID " + dto.getId() + " no encontrado"));
 
-        Integer idProvincia = dto.getIdProvincia();
-        Provincia provincia = provinciaRepository.findById(idProvincia).orElseThrow(()
-                -> new EntityNotFoundException("Provincia con ID: "+idProvincia + " no encontrada"));
-
-        usuarioExistente.setProvincia(provincia);
-
-        usuarioExistente.setEmail(dto.getEmail());
+        // Actualizar campos básicos
         usuarioExistente.setNombre(dto.getNombre());
         usuarioExistente.setApellido(dto.getApellido());
+        usuarioExistente.setEmail(dto.getEmail());
 
+        // Actualizar provincia
+        if (dto.getIdProvincia() != null) {
+            Provincia provincia = provinciaRepository.findById(dto.getIdProvincia())
+                    .orElseThrow(() -> new EntityNotFoundException("Provincia con ID " + dto.getIdProvincia() + " no encontrada"));
+            usuarioExistente.setProvincia(provincia);
+        }
+
+        // Actualizar foto de perfil si se proporciona
+        if (dto.getRutaImg() != null) {
+            usuarioExistente.setRutaImg(dto.getRutaImg());
+        }
 
         return usuarioRepository.save(usuarioExistente);
     }
 
-    public boolean cambiarRol(Integer userId, RolUsuario rol) {
-        Usuario userToModify = usuarioRepository.findById(userId).orElseThrow(()
-                -> new EntityNotFoundException("Usuario no encontrado"));
+    public Boolean cambiarRol(Integer idUsuario, RolUsuario nuevoRol) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario con ID " + idUsuario + " no encontrado"));
 
-        userToModify.setRol(rol);
-        usuarioRepository.save(userToModify);
+        usuario.setRol(nuevoRol);
+        if (nuevoRol == RolUsuario.ORGANIZADOR) {
+            emailService.EnviarMailNuevoOrganizador(usuario);
+        }
+
+        usuarioRepository.save(usuario);
+
         return true;
     }
-    }
-
+}

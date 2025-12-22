@@ -18,4 +18,6 @@ public class NuevoCanjeableDTO {
     private LocalDateTime validoHasta;
 
     private String nombreSponsor;
+
+    private Boolean activo;
 }

@@ -35,8 +35,94 @@ public class CanjeableService {
         nuevoCanjeable.setCostoPuntos(dto.getCostoPuntos());
         nuevoCanjeable.setValidoHasta(dto.getValidoHasta());
         nuevoCanjeable.setNombreSponsor(dto.getNombreSponsor());
+        nuevoCanjeable.setActivo(true); // ⭐ NUEVO: Por defecto activo
         canjeableRepository.save(nuevoCanjeable);
         return nuevoCanjeable;
+    }
+
+    /**
+     * ⭐ NUEVO: Obtener TODOS los canjeables (para administración)
+     * Incluye activos, inactivos, vigentes y vencidos
+     */
+    public List<CanjeableDTO> getAllCanjeablesAdmin() {
+        List<Canjeable> canjeables = canjeableRepository.findAll();
+        List<Sponsor> sponsors = sponsorService.getAllSponsors();
+        List<CanjeableDTO> response = new ArrayList<>();
+
+        for (Canjeable canjeable : canjeables) {
+            CanjeableDTO dto = mapper.map(canjeable, CanjeableDTO.class);
+            // Find sponsor by sponsorId
+            Sponsor sponsor = sponsors.stream()
+                    .filter(s -> s.getId().equals(canjeable.getSponsorId()))
+                    .findFirst()
+                    .orElse(null);
+
+            dto.setSponsor(sponsor);
+            response.add(dto);
+        }
+        return response;
+    }
+
+    /**
+     * ⭐ NUEVO: Obtener un canjeable por ID
+     */
+    public CanjeableDTO getCanjeableById(Integer id) {
+        Canjeable canjeable = canjeableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Canjeable no encontrado con id: " + id));
+
+        CanjeableDTO dto = mapper.map(canjeable, CanjeableDTO.class);
+
+        // Obtener sponsor
+        List<Sponsor> sponsors = sponsorService.getAllSponsors();
+        Sponsor sponsor = sponsors.stream()
+                .filter(s -> s.getId().equals(canjeable.getSponsorId()))
+                .findFirst()
+                .orElse(null);
+
+        dto.setSponsor(sponsor);
+        return dto;
+    }
+
+    /**
+     * ⭐ NUEVO: Actualizar un canjeable
+     */
+    @Transactional
+    public Canjeable updateCanjeable(Integer id, NuevoCanjeableDTO dto) {
+        Canjeable canjeable = canjeableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Canjeable no encontrado con id: " + id));
+
+        // Verificar que esté vigente antes de permitir edición
+        if (canjeable.getValidoHasta().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("No se puede editar un canjeable vencido");
+        }
+
+        canjeable.setNombre(dto.getNombre());
+        canjeable.setSponsorId(dto.getSponsorId());
+        canjeable.setUrl(dto.getUrl());
+        canjeable.setCostoPuntos(dto.getCostoPuntos());
+        canjeable.setValidoHasta(dto.getValidoHasta());
+        canjeable.setNombreSponsor(dto.getNombreSponsor());
+        canjeable.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+
+        return canjeableRepository.save(canjeable);
+    }
+
+    /**
+     * ⭐ NUEVO: Soft delete - Marca activo = false
+     */
+    @Transactional
+    public Boolean deleteCanjeable(Integer id) {
+        Canjeable canjeable = canjeableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Canjeable no encontrado con id: " + id));
+
+        // Verificar que esté vigente antes de permitir eliminación
+        if (canjeable.getValidoHasta().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("No se puede eliminar un canjeable vencido");
+        }
+
+        canjeable.setActivo(false);
+        canjeableRepository.save(canjeable);
+        return true;
     }
 
     /**
@@ -52,28 +138,32 @@ public class CanjeableService {
 
         // Verificar que el usuario tenga suficientes puntos
         if (usuario.getPuntos() < canjeable.getCostoPuntos()) {
-            throw new RuntimeException("Puntos insuficientes. Se requieren " + canjeable.getCostoPuntos() +
-                    " puntos pero el usuario solo tiene " + usuario.getPuntos());
+            throw new RuntimeException("Puntos insuficientes. Necesitas " + canjeable.getCostoPuntos() +
+                    " puntos, tienes " + usuario.getPuntos());
         }
 
-        // Verificar que el canjeable no esté ya en la lista del usuario
-        if (usuario.getCanjeables().contains(canjeable)) {
-            throw new RuntimeException("El usuario ya posee este canjeable");
+        // Verificar que el canjeable esté activo
+        if (!canjeable.getActivo()) {
+            throw new RuntimeException("Este canjeable no está disponible");
         }
 
-        // Agregar el canjeable al usuario
-        usuario.getCanjeables().add(canjeable);
+        // Verificar que el canjeable no esté vencido
+        if (canjeable.getValidoHasta().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Este canjeable ha vencido");
+        }
 
-        // Descontar los puntos
+        // Descontar puntos
         usuario.setPuntos(usuario.getPuntos() - canjeable.getCostoPuntos());
 
-        // Guardar el usuario (cascade guardará la relación)
+        // Agregar canjeable al usuario
+        usuario.getCanjeables().add(canjeable);
+
         usuarioRepository.save(usuario);
         return true;
     }
 
     /**
-     * Canjear cupón - Remueve el canjeable del usuario (marca como usado/canjeado)
+     * Canjear un cupón - Elimina la relación del usuario con el canjeable
      */
     @Transactional
     public Usuario canjearCupon(Integer usuarioId, Integer canjeableId) {
@@ -83,29 +173,21 @@ public class CanjeableService {
         Canjeable canjeable = canjeableRepository.findById(canjeableId)
                 .orElseThrow(() -> new RuntimeException("Canjeable no encontrado con id: " + canjeableId));
 
-        // Verificar que el usuario tenga este canjeable
-        if (!usuario.getCanjeables().contains(canjeable)) {
-            throw new RuntimeException("El usuario no posee este canjeable");
-        }
-
-        // Remover el canjeable del usuario (marcarlo como canjeado/usado)
+        // Remover el canjeable del usuario
         usuario.getCanjeables().remove(canjeable);
 
-        // Guardar el usuario
         return usuarioRepository.save(usuario);
     }
 
     /**
-     * Obtener todos los canjeables de un usuario
+     * Obtener canjeables de un usuario
      */
     public List<CanjeableDTO> getCanjeablesByUsuarioId(Integer usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + usuarioId));
 
-        // Get all sponsors
-        List<Sponsor> sponsors = sponsorService.getAllSponsors();
-
         List<Canjeable> canjeables = usuario.getCanjeables();
+        List<Sponsor> sponsors = sponsorService.getAllSponsors();
         List<CanjeableDTO> canjeableDTOS = new ArrayList<>();
 
         for (Canjeable canjeable : canjeables) {
@@ -124,21 +206,21 @@ public class CanjeableService {
         return canjeableDTOS;
     }
 
-
     /**
      * Obtener todos los canjeables disponibles (para mostrar en la tienda)
-     * Solo retorna canjeables con fecha de vencimiento válida (validoHasta > now)
+     * Solo retorna canjeables activos y vigentes
      */
     public List<CanjeableDTO> getAllCanjeablesDisponibles() {
         LocalDateTime now = LocalDateTime.now();
         List<Canjeable> canjeables = canjeableRepository.findAll().stream()
-                .filter(canjeable -> canjeable.getValidoHasta().isAfter(now))
+                .filter(canjeable -> canjeable.getActivo() && canjeable.getValidoHasta().isAfter(now))
                 .toList();
 
         List<Sponsor> sponsors = sponsorService.getAllSponsors();
         List<CanjeableDTO> response = new ArrayList<>();
+
         for (Canjeable canjeable : canjeables) {
-            CanjeableDTO dto = mapper.map(canjeable,CanjeableDTO.class);
+            CanjeableDTO dto = mapper.map(canjeable, CanjeableDTO.class);
             // Find sponsor by sponsorId
             Sponsor sponsor = sponsors.stream()
                     .filter(s -> s.getId().equals(canjeable.getSponsorId()))

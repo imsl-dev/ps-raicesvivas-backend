@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "inscripciones")
 @Data
@@ -27,4 +29,7 @@ public class Inscripcion {
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private EstadoInscripcion estado;
+
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDateTime fechaCreacion;
 }

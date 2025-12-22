@@ -4,6 +4,8 @@ import com.raicesvivas.backend.models.dtos.EventoResponseDto;
 import com.raicesvivas.backend.models.dtos.Eventos.EventoRequestDto;
 import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasRequestDto;
 import com.raicesvivas.backend.models.dtos.Eventos.PlanillaAsistenciasResponseDto;
+import com.raicesvivas.backend.models.dtos.mailDtos.EmailMultiRequestDto;
+import com.raicesvivas.backend.models.dtos.mailDtos.EmailRequestDto;
 import com.raicesvivas.backend.models.entities.Evento;
 import com.raicesvivas.backend.models.entities.Inscripcion;
 import com.raicesvivas.backend.models.entities.Sponsor;
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +39,7 @@ public class EventoService {
     private final UsuarioRepository usuarioRepository;
     private final SponsorRepository sponsorRepository;
     private final CuentaBancariaRepository cuentaBancariaRepository;
+    private final EmailService emailService;
 
     // ====================================
     // MÉTODOS PÚBLICOS
@@ -63,6 +67,10 @@ public class EventoService {
         Evento nuevoEvento = convertirAEntidad(dto);
         nuevoEvento.setId(null); // Asegurar que es nuevo
         Evento eventoGuardado = eventoRepository.save(nuevoEvento);
+
+        Optional<Usuario> organizador = usuarioRepository.findById(dto.getOrganizadorId());
+        organizador.ifPresent(usuario -> emailService.EnviarEmailConfirmacionCreacionEvento(usuario, eventoGuardado));
+
         return convertirAResponse(eventoGuardado);
     }
 
@@ -74,8 +82,19 @@ public class EventoService {
         // Convertir DTO a entidad (con las relaciones cargadas)
         Evento eventoActualizado = convertirAEntidad(dto);
         eventoActualizado.setId(dto.getId()); // Mantener el ID
-
         Evento eventoGuardado = eventoRepository.save(eventoActualizado);
+
+        EmailMultiRequestDto email = new EmailMultiRequestDto();
+        email.setEmailsDestinatarios(obtenerEmailsUsuariosInscriptos(eventoGuardado.getId()));
+        if (eventoGuardado.getEstado() == EstadoEvento.CANCELADO){
+            Optional<Usuario> organizador = usuarioRepository.findById(dto.getOrganizadorId());
+            emailService.EnviarMailConfirmacionCancelacionUsuarios(email, eventoGuardado);
+            emailService.EnviarMailConfirmacionCancelacionOrganizador(organizador.get(), eventoGuardado);
+        }
+        else {
+            emailService.EnviarMailModificacionDeEvento(email, eventoGuardado);
+        }
+
         return convertirAResponse(eventoGuardado);
     }
 
@@ -100,6 +119,14 @@ public class EventoService {
             inscripcion.setEventoId(eventoId);
             inscripcion.setUsuarioId(usuarioId);
             inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+            inscripcion.setFechaCreacion(LocalDateTime.now());
+
+            Optional<Evento> eventoOpc = eventoRepository.findById(eventoId);
+            Optional<Usuario> usuarioOpc = usuarioRepository.findById(usuarioId);
+            if (eventoOpc.isPresent() && usuarioOpc.isPresent()) {
+                emailService.EnviarMailConfirmacionInscripcion(usuarioOpc.get(), eventoOpc.get());
+            }
+
             return inscripcionRepository.save(inscripcion);
         }
     }
@@ -121,11 +148,13 @@ public class EventoService {
     public PlanillaAsistenciasResponseDto getAsistenciasPorIdEvento(Integer eventoId) {
         List<Inscripcion> inscripciones = inscripcionRepository.findByEventoId(eventoId);
         PlanillaAsistenciasResponseDto asistenciasResponse = new PlanillaAsistenciasResponseDto();
+        asistenciasResponse.setEventoId(eventoId); // AGREGAR ESTA LÍNEA
+
         for (Inscripcion inscripcion : inscripciones) {
             Usuario usuario = usuarioRepository.findById(inscripcion.getUsuarioId()).orElse(null);
             if (usuario != null) {
                 String nombreUsuario = usuario.getNombre() + " " + usuario.getApellido();
-                boolean asistencia = inscripcion.getEstado().equals(EstadoInscripcion.PENDIENTE);
+                boolean asistencia = EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado());
                 asistenciasResponse.getUsuariosAsistencias().add(
                         new UsuarioNombreAsistencia(usuario.getId(), nombreUsuario, asistencia)
                 );
@@ -152,35 +181,42 @@ public class EventoService {
                 if (usuarioOpc.isPresent() && inscripcionOpc.isPresent()) {
                     Usuario usuario = usuarioOpc.get();
                     Inscripcion inscripcion = inscripcionOpc.get();
-                    Integer puntosEvento = evento.getPuntosAsistencia() != null ? evento.getPuntosAsistencia() : 0;
+                    Integer puntosEvento = evento.getPuntosAsistencia() != null ?
+                            evento.getPuntosAsistencia() : 0;
 
-                    // GESTIÓN DE PRESENTES
-                    /* Si: [el usuario tiene presente] y [en su inscripción no figura como presente (para no sumar pts dos veces)]
-                        y el estado se encuentra EN_CURSO o FINALIZADO -> Esta última validacion está por las dudas */
-                    if (asistencia.asistio() && (inscripcion.getEstado() != EstadoInscripcion.PRESENTE) &&
-                            ( (evento.getEstado().equals(EstadoEvento.EN_CURSO) || (evento.getEstado().equals(EstadoEvento.FINALIZADO)) ))) {
-                        usuario.setPuntos(usuario.getPuntos() + puntosEvento);
-                        inscripcion.setEstado(EstadoInscripcion.PRESENTE);
-                        usuarioRepository.save(usuario);
-                    }
+                    EstadoInscripcion estadoAnterior = inscripcion.getEstado();
+                    boolean eraPresente = EstadoInscripcion.PRESENTE.equals(estadoAnterior);
+                    boolean eventoPermiteAsistencia = evento.getEstado().equals(EstadoEvento.EN_CURSO)
+                            || evento.getEstado().equals(EstadoEvento.FINALIZADO);
 
-                    // GESTIÓN DE AUSENTES
-                    else {
-                        // Gestión de puntos
-                        // Se asignó presente de forma errónea y ahora se deben restar los puntos
-                        if (EstadoInscripcion.PRESENTE.equals(inscripcion.getEstado())) {
-                            int nuevosPuntos = usuario.getPuntos() - puntosEvento;
-                            usuario.setPuntos(Math.max(nuevosPuntos, 0));
-                            usuarioRepository.save(usuario);
+                    if (asistencia.asistio()) {
+                        // El usuario asistió
+                        if (eventoPermiteAsistencia) {
+                            inscripcion.setEstado(EstadoInscripcion.PRESENTE);
+                            // Solo sumar puntos si no era PRESENTE antes
+                            if (!eraPresente) {
+                                usuario.setPuntos(usuario.getPuntos() + puntosEvento);
+                                usuarioRepository.save(usuario);
+                            }
                         }
-
-                        // Gestión de asistencia
-                        if (evento.getEstado().equals(EstadoEvento.EN_CURSO)){
-                            inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+                        // Si el evento no permite asistencia (PROXIMO/CANCELADO), no hacemos nada con el estado
+                    } else {
+                        // El usuario NO asistió
+                        if (eventoPermiteAsistencia) {
+                            // Restar puntos si antes era PRESENTE
+                            if (eraPresente) {
+                                int nuevosPuntos = usuario.getPuntos() - puntosEvento;
+                                usuario.setPuntos(Math.max(nuevosPuntos, 0));
+                                usuarioRepository.save(usuario);
+                            }
+                            // Determinar el nuevo estado según el estado del evento
+                            if (evento.getEstado().equals(EstadoEvento.EN_CURSO)) {
+                                inscripcion.setEstado(EstadoInscripcion.PENDIENTE);
+                            } else {
+                                inscripcion.setEstado(EstadoInscripcion.AUSENTE);
+                            }
                         }
-                        else if (evento.getEstado().equals(EstadoEvento.FINALIZADO)) {
-                            inscripcion.setEstado(EstadoInscripcion.AUSENTE);
-                        }
+                        // Si el evento no permite asistencia (PROXIMO/CANCELADO), no hacemos nada con el estado
                     }
                     inscripcionRepository.save(inscripcion);
                 }
@@ -192,6 +228,12 @@ public class EventoService {
         else {
             throw new IllegalStateException("No se encuentra el evento. Evento ID: " + planillaAsistencias.getEventoId());}
         return  new MensajeOperacion(estadoOperacion, mensaje);
+    }
+
+    public void NotificarEventoEnCurso (Evento evento){
+        EmailMultiRequestDto email = new EmailMultiRequestDto();
+        email.setEmailsDestinatarios(obtenerEmailsUsuariosInscriptos(evento.getId()));
+        emailService.EnviarMailEventoEnCurso(email, evento);
     }
 
     // ====================================
@@ -271,6 +313,12 @@ public class EventoService {
         dto.setCostoInterno(evento.getCostoInterno());
         dto.setCostoInscripcion(evento.getCostoInscripcion());
 
+        // Contar inscritos (no cancelados)
+        long cantidadInscritos = inscripcionRepository.findByEventoId(evento.getId()).stream()
+                .filter(i -> !EstadoInscripcion.CANCELADO.equals(i.getEstado()))
+                .count();
+        dto.setCantidadInscritos((int) cantidadInscritos);
+
         // Extraer IDs y nombres de las relaciones
         if (evento.getProvincia() != null) {
             dto.setProvinciaId(evento.getProvincia().getId());
@@ -288,6 +336,9 @@ public class EventoService {
         if (evento.getSponsor() != null) {
             dto.setSponsorId(evento.getSponsor().getId());
             dto.setSponsorNombre(evento.getSponsor().getNombre());
+            dto.setSponsorRutaImg1(evento.getSponsor().getRutaImg1());
+            dto.setSponsorRutaImg2(evento.getSponsor().getRutaImg2());
+            dto.setSponsorLinkDominio(evento.getSponsor().getLinkDominio());
         }
 
         if (evento.getCuentaBancaria() != null) {
@@ -295,5 +346,15 @@ public class EventoService {
         }
 
         return dto;
+    }
+
+    private List<String> obtenerEmailsUsuariosInscriptos(Integer eventoId) {
+        List<Inscripcion> inscripciones = inscripcionRepository.findByEventoId(eventoId);
+
+        return inscripciones.stream()
+                .map(inscripcion -> usuarioRepository.findById(inscripcion.getUsuarioId()).orElse(null))
+                .filter(usuario -> usuario != null)
+                .map(Usuario::getEmail)
+                .toList();
     }
 }

@@ -24,6 +24,7 @@ public class PeticionOrganizadorService {
     private final PeticionOrganizadorRepository peticionRepository;
 
     private final UsuarioRepository usuarioRepository;
+    private final EmailService emailService;
 
     public boolean usuarioTienePeticion(Integer idUsuario) {
         PeticionOrganizador peticion = peticionRepository.findByUsuarioId(idUsuario);
@@ -32,25 +33,24 @@ public class PeticionOrganizadorService {
     }
 
     public PeticionOrganizador postPeticion(PeticionOrganizadorDTO dto) throws BadRequestException {
-
-
-      if (usuarioTienePeticion(dto.getIdUsuario())) {
+        if (usuarioTienePeticion(dto.getIdUsuario())) {
           throw new BadRequestException("Este usuario ya tiene una peticion activa");
-      }
+        }
 
-      PeticionOrganizador peticion = mapper.map(dto,PeticionOrganizador.class);
-      peticion.setId(null);
-      peticion.setEstadoPeticion(EstadoPeticion.PENDIENTE);
+        PeticionOrganizador peticion = mapper.map(dto,PeticionOrganizador.class);
+        peticion.setId(null);
+        peticion.setEstadoPeticion(EstadoPeticion.PENDIENTE);
 
         //fetch name by id
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElseThrow(()
-                -> new EntityNotFoundException("Usuario no encontrado"));
+        -> new EntityNotFoundException("Usuario no encontrado"));
 
         peticion.setNombreUsuario(usuario.getNombre());
         peticion.setApellidoUsuario(usuario.getApellido());
         peticion.setEmail(usuario.getEmail());
 
-      return peticionRepository.save(peticion);
+        emailService.EnviarEmailNuevaPeticionOrganizador(usuario);
+        return peticionRepository.save(peticion);
     }
 
     public PeticionOrganizador getPeticionByUserId(Integer userId) {

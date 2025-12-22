@@ -14,4 +14,5 @@ public class CanjeableDTO {
     private Integer costoPuntos;
     private LocalDateTime validoHasta;
     private Sponsor sponsor;
+    private Boolean activo;
 }
